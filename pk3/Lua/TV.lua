@@ -53,6 +53,7 @@ tv.changeTVState = function(player, statename)
 	if not (player.pvars) then return end
 	if not (player.tv_animations) then return end
 	if not validtvstates[statename] then return end
+	if validtvstates[statename].name == player.tv_animations.anims['TV'].patch_name then return end
 	if (player.tv_animations.anims['TV'].patch_name == 'TV_OPEN') then return end
 	
 	if (player.tv_animations.anims['TRANSITION'] or player.pvars.nextsettings) then

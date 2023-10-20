@@ -139,6 +139,7 @@ mobjinfo[MT_GRABBEDMOBJ] = {
 //LUIGI BUDD WAS HERE!!
 //fix whatever nick was doing
 rawset(_G, "SpawnGrabbedObject",function(tm,source)
+	if not (tm and tm.valid and source and source.valid) then return end
 	local ragdoll = P_SpawnMobjFromMobj(tm,0,0,tm.height,MT_GRABBEDMOBJ)
 	tm.tics = -1
 	ragdoll.sprite = tm.sprite
@@ -154,6 +155,7 @@ rawset(_G, "SpawnGrabbedObject",function(tm,source)
 	ragdoll.ragdoll = true
 	ragdoll.tics = -1
 	P_RemoveMobj(tm)
+
 	return ragdoll
 end)
 

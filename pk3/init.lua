@@ -13,4 +13,21 @@ dofile('TV.lua')
 
 dofile('FSM.lua')
 dofile('State Manager.lua')
+
+local path = "States/Peppino/"
+
+dofile(path..'Base.lua')
+
+for i = 1,3 do
+	dofile(path.."Machs/"..i..".lua")
+end
+
+dofile(path.."Skid.lua")
+dofile(path.."Drift.lua")
+
+dofile(path.."Grab.lua")
+dofile(path.."Grabbed Enemy.lua")
+dofile(path.."Kill Enemy.lua")
+
+
 dofile("tgtls' stupid lua")
