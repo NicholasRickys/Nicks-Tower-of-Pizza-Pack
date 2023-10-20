@@ -18,6 +18,8 @@ the coolest pizza tower mod to exist (i think)
 4. - Make a build/ folder within the repo
 5. - Run the Makefile included
 6. - Run in SRB2
+
+ If you're lazy to do this, there's always the actions builds.
   
 # How to Update
 1. - Move to your repo using ```cd```
