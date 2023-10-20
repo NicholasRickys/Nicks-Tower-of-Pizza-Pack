@@ -131,28 +131,28 @@ freeslot('MT_GRABBEDMOBJ')
 
 mobjinfo[MT_GRABBEDMOBJ] = {
 	doomednum = -1,
-	spawnstate = S_PLAY_STND,
+	spawnstate = S_PLAY_WAIT,
 	flags = MF_NOCLIP|MF_NOBLOCKMAP|MF_NOCLIPHEIGHT|MF_NOGRAVITY
 }
 
 //code by luigi
+//LUIGI BUDD WAS HERE!!
+//fix whatever nick was doing
 rawset(_G, "SpawnGrabbedObject",function(tm,source)
-	--unimportant stuff
-	//spawn ragdoll thing here
 	local ragdoll = P_SpawnMobjFromMobj(tm,0,0,tm.height,MT_GRABBEDMOBJ)
-	ragdoll.state = tm.state
 	tm.tics = -1
 	ragdoll.sprite = tm.sprite
 	ragdoll.color = tm.color
-	ragdoll.angle = source.player.drawangle
+	ragdoll.angle = source.angle
 	ragdoll.frame = tm.frame
 	ragdoll.height = tm.height
 	ragdoll.radius = tm.radius
 	ragdoll.scale = tm.scale
-	ragdoll.target = tm
-	ragdoll.flags = MF_NOCLIP|MF_NOBLOCKMAP|MF_NOCLIPHEIGHT|MF_NOGRAVITY
-	ragdoll.deathstate = tm.deathstate
-	ragdoll.xdeathstate = tm.xdeathstate
+	ragdoll.timealive = 1
+	ragdoll.target = source
+	ragdoll.flags = MF_NOCLIP|MF_NOCLIPHEIGHT|MF_NOGRAVITY|MF_NOCLIPTHING
+	ragdoll.ragdoll = true
+	ragdoll.tics = -1
 	P_RemoveMobj(tm)
 	return ragdoll
 end)
