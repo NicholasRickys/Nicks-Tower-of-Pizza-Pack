@@ -1,4 +1,4 @@
-name: Pak Takis
+name: Pak NTOPP
 
 on: [push]
 
@@ -19,11 +19,11 @@ jobs:
     - name: Download PaK3`s dependencies
       run: bash -c "cd PaK3; npm i"
     - name: Run PaK3
-      run: node PaK3/main.js pk3/ build/build.pk3
+      run: node PaK3/main.js pk3/ build.pk3
     # -$(date '+%d-%m-%Y')
-    - name: Upload Takis - Artifact
+    - name: Upload NTOPP - Artifact
       uses: actions/upload-artifact@v3.1.0
       with:
         name: 'ntopp-v2'
-        path: "build/build.pk3"
+        path: "build.pk3"
         if-no-files-found: error
