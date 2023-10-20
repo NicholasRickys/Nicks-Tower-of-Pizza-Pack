@@ -9,6 +9,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Make dummy package lock
+      run: echo '{"name":"dummy","version":"1.0.0","lockfileVersion":3,"requires":true,"packages":{}}}' > package-lock.json
     - name: Use Node.js 18.x
       uses: actions/setup-node@v3
       with:
