@@ -1,0 +1,9 @@
+Character
+SkinName = npeppino
+DisplayName = pep
+TagTextColor = SKINCOLOR_WHITE
+TagOutlineColor = SKINCOLOR_BLACK
+OppositeColor = SKINCOLOR_PURPLE
+PlayerText = Placing the holder!
+
+#

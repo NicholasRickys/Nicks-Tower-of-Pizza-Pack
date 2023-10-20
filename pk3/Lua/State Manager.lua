@@ -571,7 +571,12 @@ addHook('MobjThinker', function(mobj)
 	if player.pvars.killed == nil then
 		P_MoveOrigin(mobj, mo.x, mo.y, mo.z+mo.height+(2*FU))
 	else
-		P_MoveOrigin(mobj, mo.x+((mo.radius/FU)*cos(angle)), mo.y+((mo.radius/FU)*sin(angle)), mo.z+(mo.height/2))
+		//readable now
+		P_MoveOrigin(mobj,
+			mo.x+((mo.radius/FU)*cos(angle)),
+			mo.y+((mo.radius/FU)*sin(angle)),
+			mo.z+(mo.height/2)
+		)
 	end
 	mobj.momx = 0
 	mobj.momy = 0
