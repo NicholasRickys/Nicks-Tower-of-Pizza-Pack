@@ -19,7 +19,7 @@ jobs:
     - name: Download PaK3`s dependencies
       run: bash -c "cd PaK3; npm i"
     - name: Run PaK3
-      run: node PaK3/main.js build/build.pk3
+      run: node PaK3/main.js pk3/ build/build.pk3
     # -$(date '+%d-%m-%Y')
     - name: Upload Takis - Artifact
       uses: actions/upload-artifact@v3.1.0
