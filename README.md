@@ -19,7 +19,10 @@ the coolest pizza tower mod to exist (i think)
 5. - Run the Makefile included by simply typing ```make```
 6. - Run in SRB2
 
- If you're lazy to do this, there's always the actions builds.
+If you're lazy to do this, there's always the actions builds.
+
+# Discord Server
+https://discord.gg/zd2RyRu8Sq
   
 # How to Update
 1. - Move to your repo using ```cd```
