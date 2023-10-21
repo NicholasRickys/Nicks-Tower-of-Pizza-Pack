@@ -7,7 +7,7 @@ the coolest pizza tower mod to exist (i think)
 - A terminal
 - Git
 - Node.JS
-- [PaK3](https://github.com/UnmatchedBracket/PaK3) (requires Node.JS)
+- Pak3 (included with repo, by Unmatched Bracket, requires Node.JS)
 - Makefile
 - A brain
 
