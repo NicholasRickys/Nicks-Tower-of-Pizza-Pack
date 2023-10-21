@@ -38,28 +38,3 @@ fsm.ChangeState = function(player, state)
 		print('Changed state to '..fsmstates[player.fsm.state][player.mo.skin].name)
 	end	
 end
-
-addHook('PlayerThink', function(player)
-	if not (player.mo and player.mo.skin == "npeppino") then
-		player.fsm = nil
-		player.pvars = nil
-		player.laststate = nil
-		player.curstate = nil
-		return
-	end
-	if (player.fsm == nil) then
-		fsm.Init(player)
-	end
-
-	if (player.curstate ~= player.mo.state) then
-		player.laststate = player.curstate
-		player.curstate = player.mo.state
-	end
-
-	if (fsmstates[player.fsm.state]
-	and fsmstates[player.fsm.state][player.mo.skin]
-	and not fsmstates[player.fsm.state][player.mo.skin].no_code
-	and fsmstates[player.fsm.state][player.mo.skin].think) then
-		fsmstates[player.fsm.state][player.mo.skin]:think(player)
-	end
-end)

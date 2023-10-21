@@ -1,5 +1,7 @@
 // PLAYER SHIT
 
+freeslot("S_DASHCLOUD","SPR_DSHC","S_SMALLDASHCLOUD","S_CLOUDEFFECT","SPR_CLEF","sfx_pstep")
+
 freeslot('sfx_mach1')
 freeslot('sfx_mach2')
 freeslot('sfx_mach3')
@@ -27,6 +29,8 @@ freeslot('SPR2_HLLA')
 freeslot('SPR2_HLWA')
 
 freeslot('SPR2_BLSL')
+
+freeslot('SPR2_WLCL')
 
 freeslot('S_PEPPINO_JUMPTRNS')
 freeslot('S_PEPPINO_FALLTRNS')
@@ -66,6 +70,8 @@ freeslot('S_PEPPINO_HAULINGFALL')
 freeslot('S_PEPPINO_HAULINGLAND')
 freeslot('S_PEPPINO_HAULINGWALK')
 
+freeslot('S_PEPPINO_WALLCLIMB')
+
 // call me lazy but no reason to type a shit ton of code when you can just
 for i = 1,5 do
 	freeslot('SPR2_FIB'..i)
@@ -73,6 +79,41 @@ for i = 1,5 do
 end
 
 freeslot('S_PEPPINO_BELLYSLIDE')
+
+sfxinfo[sfx_pstep].caption = "Step"
+sfxinfo[sfx_mach1].caption = "Mach 1"
+sfxinfo[sfx_mach2].caption = "Mach 2"
+sfxinfo[sfx_mach3].caption = "Mach 3"
+sfxinfo[sfx_mach4].caption = "Mach 4"
+sfxinfo[sfx_pskid].caption = "Skid"
+sfxinfo[sfx_drift].caption = "Drift"
+
+states[S_DASHCLOUD] = {
+	sprite = SPR_DSHC,
+	frame = A|FF_ANIMATE|FF_PAPERSPRITE,
+	tics = 16,
+	var1 = 8,
+	var2 = 2,
+	nextstate = S_DEATHSTATE
+}
+
+states[S_SMALLDASHCLOUD] = {
+	sprite = SPR_SDSC,
+	frame = A|FF_PAPERSPRITE|FF_ANIMATE,
+	tics = 10,
+	var1 = 5,
+	var2 = 2,
+	nextstate = S_DEATHSTATE
+}
+
+states[S_CLOUDEFFECT] = {
+	sprite = SPR_CLEF,
+	frame = A|FF_ANIMATE,
+	tics = 28,
+	var1 = 14,
+	var2 = 2,
+	nextstate = S_DEATHSTATE
+}
 
 states[S_PEPPINO_JUMPTRNS] = {SPR_PLAY, SPR2_JUMT|FF_ANIMATE|A, 6*2, nil, 5, 2, S_PLAY_SPRING}
 states[S_PEPPINO_FALLTRNS] = {SPR_PLAY, SPR2_FALT, 4, nil, 0, 0, S_PLAY_FALL}
@@ -110,9 +151,10 @@ states[S_PEPPINO_HAULINGIDLE] = {SPR_PLAY, SPR2_HLID, 2, nil, 0, 0, S_PEPPINO_HA
 states[S_PEPPINO_HAULINGFALLTRNS] = {SPR_PLAY, SPR2_HLFT|FF_ANIMATE|A, 6*2, nil, 5, 2, S_PEPPINO_HAULINGFALL}
 states[S_PEPPINO_HAULINGFALL] = {SPR_PLAY, SPR2_HLFL, 2, nil, 0, 0, S_PEPPINO_HAULINGFALL}
 states[S_PEPPINO_HAULINGLAND] = {SPR_PLAY, SPR2_HLLA|FF_ANIMATE|A, 5*2, nil, 4, 2, S_PEPPINO_HAULINGIDLE}
-states[S_PEPPINO_HAULINGWALK] = {SPR_PLAY, SPR2_HLWA, 2, nil, 4, 2, S_PEPPINO_HAULINGWALK}
+states[S_PEPPINO_HAULINGWALK] = {SPR_PLAY, SPR2_HLWA, 2, nil, 2, 2, S_PEPPINO_HAULINGWALK}
 
 states[S_PEPPINO_BELLYSLIDE] = {SPR_PLAY, SPR2_BLSL, 2, nil, 0, 0, S_PEPPINO_BELLYSLIDE}
+states[S_PEPPINO_WALLCLIMB] = {SPR_PLAY, SPR2_WLCL, 2, nil, 2, 2, S_PEPPINO_WALLCLIMB}
 
 // unfortunately the same cant be applied here
 states[S_PEPPINO_FINISHINGBLOW1] = {SPR_PLAY, SPR2_FIB1, 2, nil, 0, 0, S_PEPPINO_FINISHINGBLOW1}
@@ -132,32 +174,8 @@ freeslot('MT_GRABBEDMOBJ')
 mobjinfo[MT_GRABBEDMOBJ] = {
 	doomednum = -1,
 	spawnstate = S_PLAY_WAIT,
-	flags = MF_NOCLIP|MF_NOBLOCKMAP|MF_NOCLIPHEIGHT|MF_NOGRAVITY
+	flags = MF_NOGRAVITY
 }
-
-//code by luigi
-//LUIGI BUDD WAS HERE!!
-//fix whatever nick was doing
-rawset(_G, "SpawnGrabbedObject",function(tm,source)
-	if not (tm and tm.valid and source and source.valid) then return end
-	local ragdoll = P_SpawnMobjFromMobj(tm,0,0,tm.height,MT_GRABBEDMOBJ)
-	tm.tics = -1
-	ragdoll.sprite = tm.sprite
-	ragdoll.color = tm.color
-	ragdoll.angle = source.angle
-	ragdoll.frame = tm.frame
-	ragdoll.height = tm.height
-	ragdoll.radius = tm.radius
-	ragdoll.scale = tm.scale
-	ragdoll.timealive = 1
-	ragdoll.target = source
-	ragdoll.flags = MF_NOCLIP|MF_NOCLIPHEIGHT|MF_NOGRAVITY|MF_NOCLIPTHING
-	ragdoll.ragdoll = true
-	ragdoll.tics = -1
-	P_RemoveMobj(tm)
-
-	return ragdoll
-end)
 
 // MOBJ (EFFECTS, PARTICLES) SHIT
 

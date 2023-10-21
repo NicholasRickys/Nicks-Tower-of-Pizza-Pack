@@ -49,11 +49,12 @@ tv.AddAnimation = function(player, name, patch_name, ticsps, tics, loop, finishC
 	player.tv_animations.anims[name] = anims
 end
 
-tv.changeTVState = function(player, statename)
+tv.changeTVState = function(player, newstate)
 	if not (player.pvars) then return end
 	if not (player.tv_animations) then return end
-	if not validtvstates[statename] then return end
-	if validtvstates[statename].name == player.tv_animations.anims['TV'].patch_name then return end
+	local statename = newstate
+	if not validtvstates[statename] then statename = "Standard" end
+	if 'PTV_'..validtvstates[statename].name == player.tv_animations.anims['TV'].patch_name then return end
 	if (player.tv_animations.anims['TV'].patch_name == 'TV_OPEN') then return end
 	
 	if (player.tv_animations.anims['TRANSITION'] or player.pvars.nextsettings) then
@@ -78,52 +79,6 @@ tv.changeTVState = function(player, statename)
 		player.pvars.nextsettings = nil
 	end, state)
 end
-
-
-addHook('PlayerThink', function(player)
-	if not (player.mo) then player.tv_animations = nil return end
-	if not (player.fsm) then player.tv_animations = nil return end
-	if not (player.pvars) then player.tv_animations = nil return end
-	if (player.mo.skin ~= "npeppino") then player.tv_animations = nil return end
-	if (not player.tv_animations) then
-		if (leveltime > TICRATE/2) then
-			tv.AddAnimation(player, 'TV', 'TV_OPEN', 2, 16, false,
-				function(self, player, index)
-					self:changeAnim(player, 'PTV_IDLE', 2, 81, true, nil, 'Standard')
-				end, 'Standard')
-		else return end
-	end
-	for _,self in pairs(player.tv_animations.anims)
-		if (leveltime % self.ticsps) then continue end
-		if (self.tic < self.tics)
-			self.tic = $+1
-		elseif (self.loop)
-			self.tic = 1
-		elseif (self.finishCallback)
-			self:finishCallback(player, _)
-		end
-	end
-end)
-
-addHook('MapChange', function()
-	for player in players.iterate
-		player.tv_animations = nil
-	end
-end)
-
-addHook('HUD', function(v, player, camera)
-	if (not player.tv_animations) then return end
-	if (player.tv_animations.anims['TV']) then
-		v.drawScaled(230*FU, -10*FU, FU/3, v.cachePatch('TV_BG'), V_SNAPTORIGHT|V_SNAPTOTOP|V_PERPLAYER|V_HUDTRANS)
-		local patch = v.cachePatch(player.tv_animations.anims['TV'].patch_name..player.tv_animations.anims['TV'].tic)
-		v.drawScaled(230*FU, -10*FU, FU/3, patch,V_SNAPTORIGHT|V_SNAPTOTOP|V_PERPLAYER|V_HUDTRANS)
-	end
-	
-	if (player.tv_animations.anims['TRANSITION']) then
-		local patch = v.cachePatch(player.tv_animations.anims['TRANSITION'].patch_name..player.tv_animations.anims['TRANSITION'].tic)
-		v.drawScaled(230*FU, -10*FU, FU/3, patch, V_SNAPTORIGHT|V_SNAPTOTOP|V_PERPLAYER|V_HUDTRANS)
-	end
-end)
 
 // POSITION DATA FOR ME TO REMEMBER
 

@@ -14,7 +14,7 @@ fsmstates[enums.GRAB]['npeppino'] = {
 		player.pvars.cancelledgrab = false
 	end,
 	think = function(self, player)
-		if (not (player.pvars.grabbedenemy and player.pvars.grabbedenemy.valid)) then
+		if (not (player.pvars.grabbedenemy and player.pvars.grabbedenemy.valid and not player.pvars.grabbedenemy.killed)) then
 			P_InstaThrust(player.mo, player.drawangle, player.pvars.movespeed)
 			
 			if (player.pvars.grabtime) then
@@ -23,7 +23,6 @@ fsmstates[enums.GRAB]['npeppino'] = {
 				fsm.ChangeState(player, player.pvars.laststate)
 			end
 		else
-			fsm.ChangeState(player, enums.BASE_GRABBEDENEMY)
 			player.pvars.cancelledgrab = true
 		end
 	end,
@@ -31,6 +30,8 @@ fsmstates[enums.GRAB]['npeppino'] = {
 		if state ~= enums.MACH2 and state ~= enums.MACH3 and not (player.cmd.buttons & BT_SPIN) and not player.pvars.cancelledgrab then player.pvars.movespeed = 8*FU end
 		if (player.pvars.cancelledgrab) then
 			player.pvars.movespeed = 8*FU
+			player.mo.momx = 0
+			player.mo.momy = 0
 		end
 		player.pvars.cancelledgrab = false
 	end

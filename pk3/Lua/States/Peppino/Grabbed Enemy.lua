@@ -19,6 +19,11 @@ fsmstates[enums.BASE_GRABBEDENEMY]['npeppino'] = {
 			end
 		end
 
+		if not (player.pvars.grabbedenemy and player.pvars.grabbedenemy.valid) then
+			fsm.ChangeState(player, enums.BASE)
+			return
+		end
+
 		if (not P_IsObjectOnGround(player.mo)) then
 			if (player.pvars.forcedstate ~= S_PEPPINO_HAULINGFALL) then
 				player.pvars.forcedstate = S_PEPPINO_HAULINGFALL

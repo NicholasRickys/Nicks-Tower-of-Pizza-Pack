@@ -17,6 +17,7 @@ fsmstates[enums.BASE]['npeppino'] = {
 				return
 			end
 		end
+		player.pvars.movespeed = 8*FU
 
 		if (not P_IsObjectOnGround(player.mo)) then
 			if (player.mo.momz*P_MobjFlip(player.mo) > 0 and player.pvars.forcedstate ~= S_PLAY_SPRING) then

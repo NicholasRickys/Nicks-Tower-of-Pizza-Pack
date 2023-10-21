@@ -12,7 +12,9 @@ dofile('Enums.lua')
 dofile('TV.lua')
 
 dofile('FSM.lua')
-dofile('State Manager.lua')
+
+dofile('Hooks.lua')
+dofile('Functions.lua')
 
 local path = "States/Peppino/"
 
@@ -28,6 +30,3 @@ dofile(path.."Drift.lua")
 dofile(path.."Grab.lua")
 dofile(path.."Grabbed Enemy.lua")
 dofile(path.."Kill Enemy.lua")
-
-
-dofile("tgtls' stupid lua")
