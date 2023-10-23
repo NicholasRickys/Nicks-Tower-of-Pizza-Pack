@@ -41,10 +41,17 @@ fsmstates[enums.MACH1]['npeppino'] = {
 		
 		if (not (player.keysHandler[BT_SPIN].pressed) and P_IsObjectOnGround(player.mo)) then
 			fsm.ChangeState(player, enums.BASE)
+			return
+		end
+		
+		if (player.keysHandler[BT_CUSTOM1].justpressed) then
+			fsm.ChangeState(player, enums.GRAB)
+			return
 		end
 		
 		if (player.pvars.movespeed >= (18*FU)) then
 			fsm.ChangeState(player, enums.MACH2)
+			return
 		end
 	end,
 	exit = function(self, player, state)

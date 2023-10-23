@@ -1,7 +1,8 @@
-fsmstates[enums.MACH2]['npeppino'] = {
+fsmstates[enums.LONGJUMP]['npeppino'] = {
 	name = "Mach 2",
 	enter = function(self, player)
-		player.pvars.forcedstate = S_PEPPINO_MACH2
+		player.pvars.forcedstate = S_PEPPINO_LONGJUMP
+		player.mo.state = S_PEPPINO_LONGJUMPTRNS
 	end,
 	think = function(self, player)
 		if not (player.mo) then return end
@@ -13,13 +14,7 @@ fsmstates[enums.MACH2]['npeppino'] = {
 		end
 		
 		if (P_IsObjectOnGround(player.mo)) then
-			player.pvars.movespeed = $+(FU/3)
-			if (not player.pvars.forcedstate)
-				player.pvars.forcedstate = S_PEPPINO_MACH2
-			end
-		elseif (player.pvars.forcedstate)
-			player.pvars.forcedstate = nil
-			player.mo.state = S_PEPPINO_SECONDJUMPTRNS
+			fsm.ChangeState(player, GetMachSpeedEnum(player.pvars.movespeed))
 		end
 		
 		player.pvars.drawangle = player.drawangle
@@ -27,19 +22,8 @@ fsmstates[enums.MACH2]['npeppino'] = {
 		P_InstaThrust(player.mo, player.drawangle, player.pvars.movespeed)
 		P_MovePlayer(player)
 		
-		if (not (player.keysHandler[BT_SPIN].pressed) and P_IsObjectOnGround(player.mo)) then
-			fsm.ChangeState(player, enums.SKID)
-			return
-		end
-		
 		if (player.keysHandler[BT_CUSTOM1].justpressed) then
 			fsm.ChangeState(player, enums.GRAB)
-			return
-		end
-		
-		if (player.pvars.movespeed >= (40*FU)) then
-			fsm.ChangeState(player, enums.MACH3)
-			return
 		end
 	end,
 	exit = function(self, player, state)

@@ -10,6 +10,10 @@ fsmstates[enums.DRIFT] = {}
 fsmstates[enums.GRAB] = {}
 fsmstates[enums.BASE_GRABBEDENEMY] = {}
 fsmstates[enums.GRAB_KILLENEMY] = {}
+fsmstates[enums.LONGJUMP] = {}
+fsmstates[enums.CROUCH] = {}
+fsmstates[enums.ROLL] = {}
+fsmstates[enums.DIVE] = {}
 
 fsm.Init = function(player)
 	player.fsm = {}
@@ -35,6 +39,6 @@ fsm.ChangeState = function(player, state)
 	
 	if (new_state) then
 		player.fsm.state = state
-		print('Changed state to '..fsmstates[player.fsm.state][player.mo.skin].name)
+		// print(fsmstates[state][player.mo.skin].name)
 	end	
 end

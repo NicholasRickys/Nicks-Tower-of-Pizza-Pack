@@ -59,8 +59,14 @@ fsmstates[enums.MACH3]['npeppino'] = {
 		P_InstaThrust(player.mo, player.drawangle, player.pvars.movespeed)
 		P_MovePlayer(player)
 		
+		if (player.keysHandler[BT_CUSTOM1].justpressed) then
+			fsm.ChangeState(player, enums.GRAB)
+			return
+		end
+		
 		if (not (player.keysHandler[BT_SPIN].pressed) and P_IsObjectOnGround(player.mo)) then
 			fsm.ChangeState(player, enums.SKID)
+			return
 		end
 		
 		/*if (player.pvars.movespeed >= (19*FU)) then

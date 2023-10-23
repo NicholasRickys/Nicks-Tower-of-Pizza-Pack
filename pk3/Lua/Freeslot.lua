@@ -10,6 +10,8 @@ freeslot('sfx_mach4')
 freeslot('sfx_pskid')
 freeslot('sfx_drift')
 
+freeslot('sfx_pgrab')
+
 freeslot('SPR2_MAC2')
 freeslot('SPR2_MAC3')
 freeslot('SPR2_JUMT')
@@ -20,6 +22,11 @@ freeslot('SPR2_PLAN')
 freeslot('SPR2_DSPD')
 
 freeslot('SPR2_SPDH')
+freeslot('SPR2_SDHS')
+freeslot('SPR2_SDHA')
+
+freeslot('SPR2_LJTR')
+freeslot('SPR2_LOJU')
 
 freeslot('SPR2_HLST')
 freeslot('SPR2_HLID')
@@ -31,6 +38,12 @@ freeslot('SPR2_HLWA')
 freeslot('SPR2_BLSL')
 
 freeslot('SPR2_WLCL')
+
+freeslot('SPR2_CRTR')
+freeslot('SPR2_CRCH')
+freeslot('SPR2_CRAL')
+freeslot('SPR2_CRFT')
+freeslot('SPR2_CRFA')
 
 freeslot('S_PEPPINO_JUMPTRNS')
 freeslot('S_PEPPINO_FALLTRNS')
@@ -63,6 +76,12 @@ freeslot('S_PEPPINO_DASHPAD')
 
 freeslot('S_PEPPINO_SUPLEXDASH')
 
+freeslot('S_PEPPINO_AIRSUPLEXDASHTRNS')
+freeslot('S_PEPPINO_AIRSUPLEXDASH')
+
+freeslot('S_PEPPINO_LONGJUMPTRNS')
+freeslot('S_PEPPINO_LONGJUMP')
+
 freeslot('S_PEPPINO_HAULINGSTART')
 freeslot('S_PEPPINO_HAULINGIDLE')
 freeslot('S_PEPPINO_HAULINGFALLTRNS')
@@ -71,6 +90,12 @@ freeslot('S_PEPPINO_HAULINGLAND')
 freeslot('S_PEPPINO_HAULINGWALK')
 
 freeslot('S_PEPPINO_WALLCLIMB')
+
+freeslot('S_PEPPINO_CROUCHTRNS')
+freeslot('S_PEPPINO_CROUCH')
+freeslot('S_PEPPINO_CROUCHWALK')
+freeslot('S_PEPPINO_CROUCHFALLTRNS')
+freeslot('S_PEPPINO_CROUCHFALL')
 
 // call me lazy but no reason to type a shit ton of code when you can just
 for i = 1,5 do
@@ -87,6 +112,8 @@ sfxinfo[sfx_mach3].caption = "Mach 3"
 sfxinfo[sfx_mach4].caption = "Mach 4"
 sfxinfo[sfx_pskid].caption = "Skid"
 sfxinfo[sfx_drift].caption = "Drift"
+sfxinfo[sfx_pgrab].caption = "Grab"
+
 
 states[S_DASHCLOUD] = {
 	sprite = SPR_DSHC,
@@ -146,12 +173,24 @@ states[S_PEPPINO_MACHDRIFT3] = {SPR_PLAY, SPR2_FLT_, 2, nil, 0, 0, S_PEPPINO_MAC
 
 states[S_PEPPINO_SUPLEXDASH] = {SPR_PLAY, SPR2_SPDH, 2, nil, 0, 0, S_PEPPINO_SUPLEXDASH}
 
+states[S_PEPPINO_AIRSUPLEXDASHTRNS] = {SPR_PLAY, SPR2_SDHS|FF_ANIMATE|A, 5*2, nil, 4, 2, S_PEPPINO_AIRSUPLEXDASH}
+states[S_PEPPINO_AIRSUPLEXDASH] = {SPR_PLAY, SPR2_SDHA, 2, nil, 0, 0, S_PEPPINO_AIRSUPLEXDASH}
+
+states[S_PEPPINO_LONGJUMPTRNS] = {SPR_PLAY, SPR2_LJTR|FF_ANIMATE|A, 13*2, nil, 12, 2, S_PEPPINO_LONGJUMP}
+states[S_PEPPINO_LONGJUMP] = {SPR_PLAY, SPR2_LOJU, 2, nil, 0, 0, S_PEPPINO_LONGJUMP}
+
 states[S_PEPPINO_HAULINGSTART] = {SPR_PLAY, SPR2_HLST|FF_ANIMATE|A, 5*2, nil, 4, 2, S_PEPPINO_HAULINGSTART}
 states[S_PEPPINO_HAULINGIDLE] = {SPR_PLAY, SPR2_HLID, 2, nil, 0, 0, S_PEPPINO_HAULINGIDLE}
 states[S_PEPPINO_HAULINGFALLTRNS] = {SPR_PLAY, SPR2_HLFT|FF_ANIMATE|A, 6*2, nil, 5, 2, S_PEPPINO_HAULINGFALL}
 states[S_PEPPINO_HAULINGFALL] = {SPR_PLAY, SPR2_HLFL, 2, nil, 0, 0, S_PEPPINO_HAULINGFALL}
 states[S_PEPPINO_HAULINGLAND] = {SPR_PLAY, SPR2_HLLA|FF_ANIMATE|A, 5*2, nil, 4, 2, S_PEPPINO_HAULINGIDLE}
 states[S_PEPPINO_HAULINGWALK] = {SPR_PLAY, SPR2_HLWA, 2, nil, 2, 2, S_PEPPINO_HAULINGWALK}
+
+states[S_PEPPINO_CROUCH] = {SPR_PLAY, SPR2_CRCH, 2, nil, 2, 2, S_PEPPINO_CROUCH}
+states[S_PEPPINO_CROUCHTRNS] = {SPR_PLAY, SPR2_CRCH, 3*2, nil, 2, 2, S_PEPPINO_CROUCH}
+states[S_PEPPINO_CROUCHWALK] = {SPR_PLAY, SPR2_CRAL, 2, nil, 2, 2, S_PEPPINO_CROUCHWALK}
+states[S_PEPPINO_CROUCHFALL] = {SPR_PLAY, SPR2_CRFA, 2, nil, 2, 2, S_PEPPINO_CROUCHFALL}
+states[S_PEPPINO_CROUCHFALLTRNS] = {SPR_PLAY, SPR2_CRFT|FF_ANIMATE|A, 9*2, nil, 8, 2, S_PEPPINO_CROUCHFALL}
 
 states[S_PEPPINO_BELLYSLIDE] = {SPR_PLAY, SPR2_BLSL, 2, nil, 0, 0, S_PEPPINO_BELLYSLIDE}
 states[S_PEPPINO_WALLCLIMB] = {SPR_PLAY, SPR2_WLCL, 2, nil, 2, 2, S_PEPPINO_WALLCLIMB}

@@ -14,4 +14,8 @@ enums.GRAB = 8
 enums.BASE_GRABBEDENEMY = 9
 enums.GRAB_KILLENEMY = 10
 
-enums.SUPERJUMP = 11
+enums.LONGJUMP = 11
+
+enums.CROUCH = 12
+enums.ROLL = 13
+enums.DIVE = 14

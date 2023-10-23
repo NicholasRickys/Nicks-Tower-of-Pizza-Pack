@@ -1,6 +1,6 @@
 rawset(_G, 'tv', {})
 
-local function changeAnim(self, player, patch_name, ticsps, tics, loop, finishCallback, state_name)
+rawset(_G, "changeAnim", function(self, player, patch_name, ticsps, tics, loop, finishCallback, state_name)
 	self.patch_name = patch_name
 	self.tic = 1
 	self.tics = tics
@@ -8,7 +8,7 @@ local function changeAnim(self, player, patch_name, ticsps, tics, loop, finishCa
 	self.loop = loop
 	self.finishCallback = finishCallback
 	self.statename = state_name
-end
+end)
 
 local validtvstates = {} // here bc srb2 lua shit be buggin
 
@@ -41,7 +41,6 @@ tv.AddAnimation = function(player, name, patch_name, ticsps, tics, loop, finishC
 	anims.ticsps = ticsps
 	anims.loop = loop
 	anims.index = name
-	anims.changeAnim = changeAnim // should be called with : instead of . because of self argument
 	anims.statename = state_name
 	
 	anims.finishCallback = finishCallback
@@ -59,7 +58,7 @@ tv.changeTVState = function(player, newstate)
 	
 	if (player.tv_animations.anims['TRANSITION'] or player.pvars.nextsettings) then
 		local ns = player.pvars.nextsettings
-		player.tv_animations.anims['TV']:changeAnim(player, 'PTV_'..ns.name, ns.tps, ns.tics, true, nil, ns.statename)
+		changeAnim(player.tv_animations.anims['TV'], player, 'PTV_'..ns.name, ns.tps, ns.tics, true, nil, ns.statename)
 		player.tv_animations.anims['TRANSITION'] = nil
 		player.pvars.nextsettings = nil
 	end
@@ -74,7 +73,7 @@ tv.changeTVState = function(player, newstate)
 	tv.AddAnimation(player, 'TRANSITION', 'TV_WHITENOISE', 2, 5, false, 
 	function(self, player, index)
 		local ns = player.pvars.nextsettings
-		player.tv_animations.anims['TV']:changeAnim(player, 'PTV_'..ns.name, ns.tps, ns.tics, true, nil, ns.statename)
+		changeAnim(player.tv_animations.anims['TV'], player, 'PTV_'..ns.name, ns.tps, ns.tics, true, nil, ns.statename)
 		player.tv_animations.anims['TRANSITION'] = nil
 		player.pvars.nextsettings = nil
 	end, state)

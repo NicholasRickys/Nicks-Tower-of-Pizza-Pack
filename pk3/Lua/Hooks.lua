@@ -7,7 +7,7 @@ addHook('PlayerThink', function(player)
 		if (leveltime > TICRATE/2) then
 			tv.AddAnimation(player, 'TV', 'TV_OPEN', 2, 16, false,
 				function(self, player, index)
-					self:changeAnim(player, 'PTV_IDLE', 2, 81, true, nil, 'Standard')
+					changeAnim(self, player, 'PTV_IDLE', 2, 81, true, nil, 'Standard')
 				end, 'Standard')
 		else return end
 	end
@@ -79,7 +79,10 @@ addHook('PlayerThink', function(player)
 		player.mo.state = player.pvars.forcedstate // useful to force animations
 	end
 end)
-// MACH WHEN YOU HIT A ENEMY (ANIMATION PLAYS LOL)
+
+addHook('PlayerCanEnterSpinGaps', function(player)
+	return true
+end)
 
 // MAKING SPRINGS AT AS BOOSTER PADS
 
@@ -359,9 +362,6 @@ end)
 // i know
 
 addHook('ThinkFrame', do
-	if consoleplayer ~= server then return end
-	// attempt to not make resync issues
-	
 	for player in players.iterate do
 		if not player.mo then continue end
 		if not player.mo.skin == 'npeppino' then continue end

@@ -1,5 +1,5 @@
 fsmstates[enums.BASE_GRABBEDENEMY]['npeppino'] = {
-	name = "Standard",
+	name = "Grabbed Enemy",
 	enter = function(self, player)
 		player.mo.momx = 0
 		player.mo.momy = 0
@@ -17,11 +17,6 @@ fsmstates[enums.BASE_GRABBEDENEMY]['npeppino'] = {
 			if (player.playerstate == PST_DEAD) then
 				return
 			end
-		end
-
-		if not (player.pvars.grabbedenemy and player.pvars.grabbedenemy.valid) then
-			fsm.ChangeState(player, enums.BASE)
-			return
 		end
 
 		if (not P_IsObjectOnGround(player.mo)) then

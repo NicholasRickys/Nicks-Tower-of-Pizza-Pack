@@ -43,10 +43,17 @@ fsmstates[enums.BASE]['npeppino'] = {
 		
 		if (player.keysHandler[BT_CUSTOM1].justpressed) then
 			fsm.ChangeState(player, enums.GRAB)
+			return
 		end
 		
 		if (player.keysHandler[BT_SPIN].pressed and P_IsObjectOnGround(player.mo)) then
 			fsm.ChangeState(player, enums.MACH1)
+			return
+		end
+		
+		if (player.cmd.buttons & BT_CUSTOM2) and P_IsObjectOnGround(player.mo) then
+			fsm.ChangeState(player, enums.CROUCH)
+			return
 		end
 	end
 }

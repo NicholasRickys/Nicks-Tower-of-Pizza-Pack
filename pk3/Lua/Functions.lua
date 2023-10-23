@@ -7,6 +7,13 @@ rawset(_G, "Init", function()
 	return t
 end)
 
+rawset(_G, "GetMachSpeedEnum", function(movespeed)
+	if movespeed <= 18*FU then return enums.MACH1 end
+	if movespeed >= 40*FU then return enums.MACH3 end
+	
+	return enums.MACH2
+end)
+
 //code by luigi
 //LUIGI BUDD WAS HERE!!
 //fix whatever nick was doing
