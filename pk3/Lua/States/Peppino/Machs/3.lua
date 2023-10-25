@@ -14,7 +14,7 @@ fsmstates[enums.MACH3]['npeppino'] = {
 			end
 		end
 		
-		if (player.pvars.jumppressed and P_IsObjectOnGround(player.mo) and not (player.keysHandler[BT_JUMP].pressed)) then
+		if (player.pvars.jumppressed and P_IsObjectOnGround(player.mo) and not (player.cmd.buttons & BT_JUMP)) then
 			player.pvars.jumppressed = false
 		end
 		
@@ -25,9 +25,13 @@ fsmstates[enums.MACH3]['npeppino'] = {
 			elseif (player.pvars.movespeed > 40*FU)
 				player.pvars.movespeed = min(40*FU, $-(FU/12))
 			end
+			
+			if (player.pvars.forcedstate == S_PEPPINO_SUPERJUMPCANCEL) then
+				player.pvars.forcedstate = S_PEPPINO_MACH3
+			end
 		end
 		
-		if (not P_IsObjectOnGround(player.mo) and player.pflags & PF_JUMPED and player.keysHandler[BT_JUMP].pressed and not (player.pvars.jumppressed)) then
+		if (not P_IsObjectOnGround(player.mo) and player.pflags & PF_JUMPED and player.cmd.buttons & BT_JUMP and not (player.pvars.jumppressed)) then
 			player.mo.state = S_PEPPINO_MACH3JUMP
 			player.pvars.jumppressed = true
 		end
@@ -59,14 +63,26 @@ fsmstates[enums.MACH3]['npeppino'] = {
 		P_InstaThrust(player.mo, player.drawangle, player.pvars.movespeed)
 		P_MovePlayer(player)
 		
-		if (player.keysHandler[BT_CUSTOM1].justpressed) then
+		if (player.cmd.buttons & BT_CUSTOM2) and not P_IsObjectOnGround(player.mo) then
+			fsm.ChangeState(player, enums.DIVE)
+		end
+		
+		if ((player.cmd.buttons & BT_CUSTOM1 and not (player.prevkeys and player.prevkeys & BT_CUSTOM1))) then
 			fsm.ChangeState(player, enums.GRAB)
 			return
 		end
 		
-		if (not (player.keysHandler[BT_SPIN].pressed) and P_IsObjectOnGround(player.mo)) then
-			fsm.ChangeState(player, enums.SKID)
+		if (player.cmd.buttons & BT_CUSTOM3) and P_IsObjectOnGround(player.mo) then
+			fsm.ChangeState(player, enums.SUPERJUMPSTART)
 			return
+		end
+		
+		if (player.cmd.buttons & BT_CUSTOM2 and P_IsObjectOnGround(player.mo)) then
+			fsm.ChangeState(player, enums.ROLL)
+		end
+		
+		if (not (player.cmd.buttons & BT_SPIN) and P_IsObjectOnGround(player.mo)) then
+			fsm.ChangeState(player, enums.SKID)
 		end
 		
 		/*if (player.pvars.movespeed >= (19*FU)) then

@@ -14,6 +14,11 @@ fsmstates[enums.LONGJUMP] = {}
 fsmstates[enums.CROUCH] = {}
 fsmstates[enums.ROLL] = {}
 fsmstates[enums.DIVE] = {}
+fsmstates[enums.BELLYSLIDE] = {}
+fsmstates[enums.SUPERJUMPSTART] = {}
+fsmstates[enums.SUPERJUMP] = {}
+fsmstates[enums.SUPERJUMPCANCEL] = {}
+fsmstates[enums.PAIN] = {}
 
 fsm.Init = function(player)
 	player.fsm = {}

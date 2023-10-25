@@ -43,7 +43,10 @@ fsmstates[enums.BASE_GRABBEDENEMY]['npeppino'] = {
 			end
 		end
 		
-		if (player.keysHandler[BT_CUSTOM1].justpressed or player.keysHandler[BT_SPIN].justpressed) then
+		local spinpressed = (player.cmd.buttons & BT_SPIN) and not (player.prevkeys and player.prevkeys & BT_SPIN)
+		local grabpressed = (player.cmd.buttons & BT_CUSTOM1) and not (player.prevkeys and player.prevkeys & BT_CUSTOM1)
+		
+		if (spinpressed or grabpressed) then
 			fsm.ChangeState(player, enums.GRAB_KILLENEMY)
 		end
 	end

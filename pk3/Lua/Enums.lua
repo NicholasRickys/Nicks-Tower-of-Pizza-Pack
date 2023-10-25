@@ -19,3 +19,10 @@ enums.LONGJUMP = 11
 enums.CROUCH = 12
 enums.ROLL = 13
 enums.DIVE = 14
+enums.BELLYSLIDE = 15
+
+enums.SUPERJUMPSTART = 16
+enums.SUPERJUMP = 17
+enums.SUPERJUMPCANCEL = 18
+
+enums.PAIN = 19

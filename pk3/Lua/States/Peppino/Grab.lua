@@ -29,6 +29,10 @@ fsmstates[enums.GRAB]['npeppino'] = {
 			if (player.pvars.groundedgrab) then
 				if (player.pvars.grabtime) then
 					player.pvars.grabtime = $-1
+					if (player.cmd.buttons & BT_CUSTOM2) then
+						fsm.ChangeState(player, enums.BELLYSLIDE)
+						return
+					end
 				else
 					if player.pvars.laststate == enums.BASE and player.cmd.buttons & BT_SPIN then
 						player.pvars.laststate = GetMachSpeedEnum(player.pvars.movespeed)
@@ -58,7 +62,7 @@ fsmstates[enums.GRAB]['npeppino'] = {
 		end
 	end,
 	exit = function(self, player, state)
-		if state ~= enums.MACH2 and state ~= enums.LONGJUMP and state ~= enums.MACH3 and not (player.cmd.buttons & BT_SPIN) and not player.pvars.cancelledgrab then player.pvars.movespeed = 8*FU end
+		if state ~= enums.MACH2 and state ~= enums.LONGJUMP and state ~= enums.BELLYSLIDE and state ~= enums.MACH3 and not (player.cmd.buttons & BT_SPIN) and not player.pvars.cancelledgrab then player.pvars.movespeed = 8*FU end
 		if (player.pvars.cancelledgrab) then
 			player.pvars.movespeed = 8*FU
 			player.mo.momx = 0

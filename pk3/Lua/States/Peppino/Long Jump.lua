@@ -1,5 +1,5 @@
 fsmstates[enums.LONGJUMP]['npeppino'] = {
-	name = "Mach 2",
+	name = "Long Jump",
 	enter = function(self, player)
 		player.pvars.forcedstate = S_PEPPINO_LONGJUMP
 		player.mo.state = S_PEPPINO_LONGJUMPTRNS
@@ -22,7 +22,11 @@ fsmstates[enums.LONGJUMP]['npeppino'] = {
 		P_InstaThrust(player.mo, player.drawangle, player.pvars.movespeed)
 		P_MovePlayer(player)
 		
-		if (player.keysHandler[BT_CUSTOM1].justpressed) then
+		if (player.cmd.buttons & BT_CUSTOM2) and not P_IsObjectOnGround(player.mo) then
+			fsm.ChangeState(player, enums.DIVE)
+		end
+		
+		if (player.cmd.buttons & BT_CUSTOM1 and not (player.prevkeys and player.prevkeys & BT_CUSTOM1)) then
 			fsm.ChangeState(player, enums.GRAB)
 		end
 	end,

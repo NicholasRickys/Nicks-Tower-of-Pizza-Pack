@@ -23,6 +23,20 @@ addHook('PlayerThink', function(player)
 	end
 end)
 
+addHook("PlayerThink", function(p)
+	if p.prevkeys == nil then
+		p.prevkeys = p.cmd.buttons
+	end
+end)
+
+addHook('PostThinkFrame', function()
+	for p in players.iterate do
+		if p.prevkeys ~= nil then
+			p.prevkeys = p.cmd.buttons
+		end
+	end
+end)
+
 addHook('MapChange', function()
 	for player in players.iterate
 		player.tv_animations = nil
@@ -34,7 +48,7 @@ addHook('HUD', function(v, player, camera)
 	if (player.tv_animations.anims['TV']) then
 		v.drawScaled(230*FU, -10*FU, FU/3, v.cachePatch('TV_BG'), V_SNAPTORIGHT|V_SNAPTOTOP|V_PERPLAYER|V_HUDTRANS)
 		local patch = v.cachePatch(player.tv_animations.anims['TV'].patch_name..player.tv_animations.anims['TV'].tic)
-		v.drawScaled(230*FU, -10*FU, FU/3, patch,V_SNAPTORIGHT|V_SNAPTOTOP|V_PERPLAYER|V_HUDTRANS)
+		v.drawScaled(230*FU, -10*FU, FU/3, patch,V_SNAPTORIGHT|V_SNAPTOTOP|V_PERPLAYER|V_HUDTRANS, v.getColormap(nil, player.mo.color))
 	end
 	
 	if (player.tv_animations.anims['TRANSITION']) then
@@ -66,6 +80,21 @@ addHook('PlayerThink', function(player)
 	and fsmstates[player.fsm.state][player.mo.skin].think) then
 		fsmstates[player.fsm.state][player.mo.skin]:think(player)
 	end
+end)
+
+addHook('MobjDamage', function(mo)
+	local player = mo.player
+	if not (player.valid) then return end
+	if not (player.fsm) then return end
+	
+	fsm.ChangeState(player, enums.PAIN)
+end, MT_PLAYER)
+
+addHook('PlayerSpawn', function(player)
+	if not (player.valid) then return end
+	if not (player.fsm) then return end
+	
+	fsm.ChangeState(player, enums.BASE)
 end)
 
 addHook('PlayerThink', function(player)
@@ -184,8 +213,6 @@ addHook('MobjMoveBlocked', function(mo, mobj)
 	if mobj then return end
 	P_KillMobj(mo)
 end, MT_GRABBEDMOBJ)
-// FOR DRIFTING
-
 addHook('PreThinkFrame', do
 	for player in players.iterate do
 		if not (player.mo) then continue end
@@ -206,6 +233,10 @@ addHook('PreThinkFrame', do
 				fsm.ChangeState(player, enums.BASE)
 				continue
 			end
+		end
+		
+		if (player.fsm.state == enums.CROUCH or player.fsm.state == enums.ROLL)
+			player.mo.height = P_GetPlayerSpinHeight(player)
 		end
 	end
 end)

@@ -1,4 +1,5 @@
 //reskinned the grab state cause is easier
+//TO DO FOR CODERS: make peppino fit through small gaps
 
 fsmstates[enums.CROUCH]['npeppino'] = {
 	name = "Crouch",

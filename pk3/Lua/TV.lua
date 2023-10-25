@@ -27,6 +27,11 @@ validtvstates['Mach 4'] = {
 	ticsps = 2,
 	tics = 3
 }
+validtvstates['Pain'] = {
+	name = 'PAIN',
+	ticsps = 2,
+	tics = 11
+}
 
 tv.AddAnimation = function(player, name, patch_name, ticsps, tics, loop, finishCallback, state_name)
 	if (not player.tv_animations) then
@@ -53,7 +58,7 @@ tv.changeTVState = function(player, newstate)
 	if not (player.tv_animations) then return end
 	local statename = newstate
 	if not validtvstates[statename] then statename = "Standard" end
-	if 'PTV_'..validtvstates[statename].name == player.tv_animations.anims['TV'].patch_name then return end
+	if 'PTV_'..validtvstates[statename].name == player.tv_animations.anims['TV'].patch_name and not player.tv_animations.anims['TRANSITION'] then return end
 	if (player.tv_animations.anims['TV'].patch_name == 'TV_OPEN') then return end
 	
 	if (player.tv_animations.anims['TRANSITION'] or player.pvars.nextsettings) then

@@ -41,12 +41,15 @@ fsmstates[enums.BASE]['npeppino'] = {
 			end
 		end
 		
-		if (player.keysHandler[BT_CUSTOM1].justpressed) then
+		if (gametyperules & GTR_RACE and leveltime < 4*TICRATE) then return end
+		if (player.pflags & PF_STASIS) then return end
+		
+		if ((player.cmd.buttons & BT_CUSTOM1 and not (player.prevkeys and player.prevkeys & BT_CUSTOM1))) then
 			fsm.ChangeState(player, enums.GRAB)
 			return
 		end
 		
-		if (player.keysHandler[BT_SPIN].pressed and P_IsObjectOnGround(player.mo)) then
+		if (player.cmd.buttons & BT_SPIN and P_IsObjectOnGround(player.mo)) then
 			fsm.ChangeState(player, enums.MACH1)
 			return
 		end

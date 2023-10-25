@@ -27,19 +27,26 @@ fsmstates[enums.MACH2]['npeppino'] = {
 		P_InstaThrust(player.mo, player.drawangle, player.pvars.movespeed)
 		P_MovePlayer(player)
 		
-		if (not (player.keysHandler[BT_SPIN].pressed) and P_IsObjectOnGround(player.mo)) then
+		if (not (player.cmd.buttons & BT_SPIN) and P_IsObjectOnGround(player.mo)) then
 			fsm.ChangeState(player, enums.SKID)
 			return
 		end
 		
-		if (player.keysHandler[BT_CUSTOM1].justpressed) then
+		if (player.cmd.buttons & BT_CUSTOM2) and not P_IsObjectOnGround(player.mo) then
+			fsm.ChangeState(player, enums.DIVE)
+		end
+		
+		if ((player.cmd.buttons & BT_CUSTOM1 and not (player.prevkeys and player.prevkeys & BT_CUSTOM1))) then
 			fsm.ChangeState(player, enums.GRAB)
 			return
 		end
 		
+		if (player.cmd.buttons & BT_CUSTOM2 and P_IsObjectOnGround(player.mo)) then
+			fsm.ChangeState(player, enums.ROLL)
+		end
+		
 		if (player.pvars.movespeed >= (40*FU)) then
 			fsm.ChangeState(player, enums.MACH3)
-			return
 		end
 	end,
 	exit = function(self, player, state)

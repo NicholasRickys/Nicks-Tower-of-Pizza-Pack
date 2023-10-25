@@ -31,4 +31,12 @@ dofile(path.."Grab.lua")
 dofile(path.."Grabbed Enemy.lua")
 dofile(path.."Kill Enemy.lua")
 dofile(path.."Long Jump.lua")
+
 dofile(path.."Crouch.lua")
+dofile(path.."Roll.lua")
+dofile(path..'Dive.lua')
+dofile(path..'Belly Slide.lua')
+
+dofile(path.."Super Jump.lua")
+
+dofile(path.."Pain.lua")
