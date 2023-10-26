@@ -30,7 +30,7 @@ fsmstates[enums.SUPERJUMPSTART]['npeppino'] = {
 			player.pflags = $|PF_STASIS
 		end
 			
-		if not (player.cmd.buttons & BT_CUSTOM3) then
+		if not (player.cmd.buttons & BT_CUSTOM3) and P_IsObjectOnGround(player.mo) then
 			fsm.ChangeState(player, enums.SUPERJUMP)
 		end
 	end
