@@ -44,6 +44,10 @@ addHook('MapChange', function()
 end)
 
 addHook('HUD', function(v, player, camera)
+	if (player.mo and player.mo.skin == 'npeppino')
+		v.drawString(320/2, 4, 'https://discord.gg/5TvYjFvWEy', V_TRANSLUCENT|V_ALLOWLOWERCASE, 'thin-center')
+	end
+
 	if (not player.tv_animations) then return end
 	if (player.tv_animations.anims['TV']) then
 		v.drawScaled(230*FU, -10*FU, FU/3, v.cachePatch('TV_BG'), V_SNAPTORIGHT|V_SNAPTOTOP|V_PERPLAYER|V_HUDTRANS)
@@ -213,6 +217,28 @@ addHook('MobjMoveBlocked', function(mo, mobj)
 	if mobj then return end
 	P_KillMobj(mo)
 end, MT_GRABBEDMOBJ)
+
+addHook('MobjMoveBlocked', function(mo, mobj, line)
+	if not line then return end
+	
+	local player = mo.player
+	if not player.mo then return end
+	
+	if not player.fsm then return end
+	if not player.pvars then return end
+	
+	if player.fsm.state ~= enums.MACH1 
+	and player.fsm.state ~= enums.MACH2 
+	and player.fsm.state ~= enums.MACH3 
+	then return end
+	
+	if P_IsObjectOnGround(mo) then return end
+	if P_PlayerInPain(player) or player.playerstate == PST_DEAD then return end
+	
+	player.pvars.savedline = line
+	fsm.ChangeState(player, enums.WALLCLIMB)
+end, MT_PLAYER)
+
 addHook('PreThinkFrame', do
 	for player in players.iterate do
 		if not (player.mo) then continue end

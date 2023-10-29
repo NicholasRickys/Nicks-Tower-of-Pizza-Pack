@@ -19,6 +19,8 @@ fsmstates[enums.SUPERJUMPSTART] = {}
 fsmstates[enums.SUPERJUMP] = {}
 fsmstates[enums.SUPERJUMPCANCEL] = {}
 fsmstates[enums.PAIN] = {}
+fsmstates[enums.WALLCLIMB] = {}
+fsmstates[enums.BODYSLAM] = {}
 
 fsm.Init = function(player)
 	player.fsm = {}

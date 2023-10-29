@@ -1,3 +1,51 @@
+rawset(_G, 'L_ZLaunch', function(mo,thrust,relative)
+	if mo.eflags&MFE_UNDERWATER
+		thrust = $*3/5
+	end
+	P_SetObjectMomZ(mo,thrust,relative)
+end)
+
+rawset(_G, "WallCheckHelper", function(mo, line) //unused for the most part, damn.
+	if not (mo and line) then return end
+	// return values should be: height, angle, fofz, fofheight, climbable
+	
+	local fofz = nil
+	local fofheight = nil
+	local side = 0
+	
+	// first we will check the sector shit
+	local sector = line.frontsector
+	if (mo.sector == line.frontsector and line.backsector) then
+		sector = line.backsector
+	end
+	
+	local diff = sector.ceilingheight - sector.floorheight
+	local height = sector.ceilingheight - diff
+	
+	// then fof shit
+	if (mo.z >= height) then
+		for fof in sector.ffloors() do
+			if mo.z >= fof.bottomheight and mo.z < fof.topheight then
+				fofz = fof.bottomheight
+				fofheight = fof.topheight
+				break
+			end
+		end
+	end
+	
+	// then angle shit
+	
+	if line.frontsector == mo.subsector.sector -- front facing
+		side = 1
+	elseif line.backsector and line.backsector == mo.subsector.sector -- back facing
+		side = -1
+	end
+	
+	local angle = R_PointToAngle2(line.v1.x, line.v1.y, line.v2.x, line.v2.y) + (ANGLE_90 * side)
+	
+	return height, angle, fofz, fofheight
+end)
+
 rawset(_G, "Init", function()
 	local t = {}
 	

@@ -36,6 +36,9 @@ fsmstates[enums.MACH3]['npeppino'] = {
 			player.pvars.jumppressed = true
 		end
 		
+		local supposeddrawangle = player.pvars.drawangle
+		if supposeddrawangle == nil then supposeddrawangle = player.drawangle end
+		
 		local diff = player.pvars.drawangle - player.drawangle
 		local deaccelerating = (P_GetPlayerControlDirection(player) == 2)
 		

@@ -27,6 +27,10 @@ fsmstates[enums.DIVE]['npeppino'] = {
 			fsm.ChangeState(player, enums.ROLL)
 			return
 		end
+		
+		if ((player.cmd.buttons & BT_JUMP) and not (player.prevkeys and player.prevkeys & BT_JUMP)) then
+			fsm.ChangeState(player, enums.BODYSLAM)
+			player.pvars.forcedstate = S_PEPPINO_DIVEBOMB
 	end,
 	exit = function(self, player, state)
 		if (state == enums.BASE) then

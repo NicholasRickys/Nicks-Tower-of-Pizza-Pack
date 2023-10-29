@@ -1,3 +1,23 @@
+//// PIZZA TIME ////
+
+rawset(_G, "PTV3_V", {})
+rawset(_G, "PTV3_F", {})
+
+G_AddGametype({
+    name = "Pizza Time",
+    identifier = "PIZZATIMEV3",
+    typeoflevel = TOL_COOP|TOL_RACE,
+    rules = GTR_RESPAWNDELAY|GTR_FRIENDLYFIRE,
+    intermissiontype = int_race,
+    headercolor = 103,
+    description = "pita time vee 3 es the bet."
+})
+dofile "Pizza Time/Functions"
+dofile "Pizza Time/Hooks"
+dofile "Pizza Time/Music"
+
+//// NTOPP ////
+
 rawset(_G, 'NTOPP_V2', {})
 
 rawset(_G, 'L_Choose', function(...)
@@ -40,3 +60,7 @@ dofile(path..'Belly Slide.lua')
 dofile(path.."Super Jump.lua")
 
 dofile(path.."Pain.lua")
+
+dofile(path.."Wall Climb.lua")
+
+dofile(path.."Body Slam.lua")

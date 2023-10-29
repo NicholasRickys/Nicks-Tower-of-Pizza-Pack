@@ -26,3 +26,7 @@ enums.SUPERJUMP = 17
 enums.SUPERJUMPCANCEL = 18
 
 enums.PAIN = 19
+
+enums.WALLCLIMB = 20
+
+enums.BODYSLAM = 21

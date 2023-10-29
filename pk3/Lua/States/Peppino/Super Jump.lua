@@ -59,7 +59,7 @@ fsmstates[enums.SUPERJUMP]['npeppino'] = {
 			
 		player.mo.momx = 0
 		player.mo.momy = 0
-		player.mo.momz = ((16*FU)+player.pvars.superjumpery)*P_MobjFlip(player.mo)
+		L_ZLaunch(player.mo, ((20*FU)+player.pvars.superjumpery))
 		player.pvars.superjumpery = $+(FU/6)
 		
 		local spinpressed = (player.cmd.buttons & BT_SPIN) and not (player.prevkeys and player.prevkeys & BT_SPIN)
@@ -94,7 +94,7 @@ fsmstates[enums.SUPERJUMPCANCEL]['npeppino'] = {
 			player.pvars.movespeed = 40*FU
 			fsm.ChangeState(player, enums.MACH3)
 			player.pvars.forcedstate = S_PEPPINO_SUPERJUMPCANCEL
-			player.mo.momz = (6*FU)*P_MobjFlip(player.mo)
+			player.mo.momz = (4*FU)*P_MobjFlip(player.mo)
 		end
 	end,
 	exit = function(self, player)

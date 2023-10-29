@@ -58,5 +58,10 @@ fsmstates[enums.BASE]['npeppino'] = {
 			fsm.ChangeState(player, enums.CROUCH)
 			return
 		end
+		
+		if ((player.cmd.buttons & BT_CUSTOM2) and not (player.prevkeys and player.prevkeys & BT_CUSTOM2)) and not P_IsObjectOnGround(player.mo)
+			fsm.ChangeState(player, enums.BODYSLAM)
+			return
+		end
 	end
 }
