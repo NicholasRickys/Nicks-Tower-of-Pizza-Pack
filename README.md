@@ -13,7 +13,7 @@ the coolest pizza tower mod to exist (i think)
 
 # How to Compile
 1. - Install the Dependencies
-2. - Move to your SRB2 addons folder using ``cd```
+2. - Move to your SRB2 addons folder using ```cd```
 3. - Clone the Repo using... ```git clone https://github.com/NicholasRickys/Nicks-Tower-of-Pizza-Pack```
 4. - Make a build/ folder within the repo
 5. - Run the Makefile included by simply typing ```make```
