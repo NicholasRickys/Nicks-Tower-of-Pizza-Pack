@@ -12,7 +12,7 @@ PTV3_F.Initialize = function()
 	
 	PTV3_V.beginningsector = nil
 	PTV3_V.signpostmobj = nil
-	PTV3_V.timer = 300*TICRATE
+	PTV3_V.timer = 600*TICRATE
 	PTV3_V.hurryup = false
 	for p in players.iterate do
 		PTV3_F.Initialize_Player(p)
@@ -99,6 +99,7 @@ PTV3_F.StartNewLap = function(p)
 	
 	p.ptv3.laps = $+1
 	p.ptv3.canlap = false
+	p.exiting = 0
 	local sec = PTV3_V.endcoords
 	if not sec then print('no sex :(') return end
 	P_SetOrigin(p.mo, sec.x, sec.y, sec.z)

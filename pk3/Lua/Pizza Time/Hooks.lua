@@ -45,7 +45,7 @@ addHook('ThinkFrame', do
 			PTV3_F.StartPizzaTime(p)
 		end
 		
-		if p.ptv3.canlap and p.cmd.buttons & BT_FIRE then
+		if p.ptv3.canlap and p.cmd.buttons & BT_ATTACK then
 			PTV3_F.StartNewLap(p)
 		end
 	end
@@ -73,3 +73,7 @@ addHook('MobjLineCollide', function(mobj, line)
 		mobj.player.ptv3.canlap = true
 	end
 end, MT_PLAYER)
+
+addHook('NetVars', function(net)
+	PTV3_V = net($)
+end)

@@ -22,5 +22,6 @@ addHook("MusicChange", function(old, new)
 		return DecidePizzaTimeMusic()
 	end
 	
+	if old == song then return true end
 	if new == mapmusname then return song end
 end)
