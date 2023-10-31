@@ -2,9 +2,6 @@ fsmstates[enums.WALLCLIMB]['npeppino'] = {
 	name = "Wall Climb",
 	enter = function(self, player)
 		player.pvars.forcedstate = S_PEPPINO_WALLCLIMB
-		local height,angle,fofz,fofheight = WallCheckHelper(player.mo, player.pvars.savedline)
-		
-		player.pvars.drawangle = angle
 	end,
 	think = function(self, player)
 		if not (player.mo) then return end
@@ -44,8 +41,7 @@ fsmstates[enums.WALLCLIMB]['npeppino'] = {
 			fsm.ChangeState(player, GetMachSpeedEnum(player.pvars.movespeed))
 			player.mo.momz = 0
 			return
-		end	
-		player.drawangle = player.pvars.drawangle
+		end
 		
 		player.pvars.movespeed = $+(FU/3)
 		player.mo.momx = 0

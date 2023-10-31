@@ -9,7 +9,7 @@ fsmstates[enums.BELLYSLIDE]['npeppino'] = {
 	name = "Belly Slide",
 	enter = function(self, player)
 		player.pvars.forcedstate = S_PEPPINO_BELLYSLIDE
-		player.pvars.angle = player.drawangle
+		player.pvars.angle = player.mo.angle
 		player.pflags = $|PF_SPINNING
 		player.pvars.slidetime = 20
 		player.pvars.movespeed = 42*FU
@@ -22,6 +22,7 @@ fsmstates[enums.BELLYSLIDE]['npeppino'] = {
 				return
 			end
 		end
+		player.pflags = $|PF_JUMPSTASIS
 		
 		if (player.pvars.slidetime) then
 			player.pvars.slidetime = $-1

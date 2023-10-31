@@ -212,12 +212,6 @@ addHook('MobjMoveCollide', function(mo, mobj)
 	mo.hashitenemy = true
 end, MT_GRABBEDMOBJ)
 
-addHook('MobjMoveBlocked', function(mo, mobj)
-	if not mo.valid then return end
-	if mobj then return end
-	P_KillMobj(mo)
-end, MT_GRABBEDMOBJ)
-
 addHook('MobjMoveBlocked', function(mo, mobj, line)
 	if not line then return end
 	
@@ -234,6 +228,24 @@ addHook('MobjMoveBlocked', function(mo, mobj, line)
 	
 	if P_IsObjectOnGround(mo) then return end
 	if P_PlayerInPain(player) or player.playerstate == PST_DEAD then return end
+	
+	local wallfound = false
+	local sector = line.frontsector
+	if (mo.sector == line.frontsector and line.backsector) then
+		sector = line.backsector
+	end
+	local sector2 = R_PointInSubsector(mo.x+FixedMul(26*FRACUNIT, cos(mo.angle)), mo.y+FixedMul(26*FRACUNIT, sin(mo.angle))).sector
+	
+	if sector == sector2 then wallfound = true end
+	
+	if wallfound then for wall in sector.ffloors()
+		if (player.mo.z <= wall.topheight) and (player.mo.height+player.mo.z > wall.bottomheight)
+			and(wall.flags & FF_BLOCKPLAYER) //Don't want the player to cling to water. That would be stupid
+			wallfound = true
+		end		
+	end end
+	
+	if not wallfound then return end
 	
 	player.pvars.savedline = line
 	fsm.ChangeState(player, enums.WALLCLIMB)

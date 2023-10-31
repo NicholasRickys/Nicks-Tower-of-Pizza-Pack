@@ -20,6 +20,7 @@ fsmstates[enums.ROLL]['npeppino'] = {
 				return
 			end
 		end
+		player.pflags = $|PF_JUMPSTASIS
 		
 		if (player.pvars.slidetime) then
 			player.pvars.slidetime = $-1

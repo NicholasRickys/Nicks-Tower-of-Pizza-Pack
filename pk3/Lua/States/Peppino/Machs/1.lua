@@ -12,6 +12,11 @@ fsmstates[enums.MACH1]['npeppino'] = {
 			end
 		end
 		
+		if WallCheckHelper(player) and not P_IsObjectOnGround(player.mo) then
+			fsm.ChangeState(player, enums.WALLCLIMB)
+			return
+		end
+		
 		if (P_IsObjectOnGround(player.mo)) then
 			player.pvars.movespeed = $+(FU/3)
 			if (not player.pvars.forcedstate)

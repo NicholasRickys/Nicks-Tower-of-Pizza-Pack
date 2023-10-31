@@ -14,6 +14,11 @@ fsmstates[enums.MACH3]['npeppino'] = {
 			end
 		end
 		
+		if WallCheckHelper(player) and not P_IsObjectOnGround(player.mo) then
+			fsm.ChangeState(player, enums.WALLCLIMB)
+			return
+		end
+		
 		if (player.pvars.jumppressed and P_IsObjectOnGround(player.mo) and not (player.cmd.buttons & BT_JUMP)) then
 			player.pvars.jumppressed = false
 		end

@@ -1,53 +1,63 @@
-// we are gonna reset the variables each time the match is over
-// and what does this call for?
-
+PTV3_F.IsGametype = function()
+	return (gametype == GT_PIZZATIMEV3)
+end
+PTV3_F.Initialize_Player = function(p)
+	p.ptv3 = {}
+	p.ptv3.laps = 1
+	p.ptv3.pizzafacemobj = nil
+end
 PTV3_F.Initialize = function()
 	PTV3_V.pizzatime = false
-	PTV3_V.sortedplayers = {} // for scoreboard
-	// ok so, we need to add the fucking end sector too, so we can like
-	// actually check if the players at spawn
+	PTV3_V.sortedplayers = {}
 	
 	PTV3_V.beginningsector = nil
-	// from line 52, back to here.
-	// why?
-	// this!
+	PTV3_V.signpostmobj = nil
+	PTV3_V.timer = 300*TICRATE
+	PTV3_V.hurryup = false
 	for p in players.iterate do
 		PTV3_F.Initialize_Player(p)
 	end
-	// thats why!
 	
-	
-end
-
-PTV3_F.Initialize()
-
-// ya see what i did there? i initialized the function for initalizing variables and ran it, i am so awesome
-// this means...
-// - no extra lines of code whenever you wanna init
-// - some other shit idfk lmfao
-
-// we are also gonna wanna init the player table whenever is called for, what were going to do is...
-
-PTV3_F.Initialize_Player = function(p)
-	p.ptv3 = {}
-	p.ptv3.laps = 1 // set it to 1, we dont change this when is pizza time
-	// thats atleast how i do it, feel free to go about your own way with laps!
-	p.ptv3.pizzaface = false
-	p.ptv3.pizzafacemobj = nil
-	// "why is there a pizzafacemobj var?"
-	// we gotta give the players the iconic pizzaface look somehow, don't we?
-	// fun fact actually: this first appeared publicly in jisk edition, but jisk actually added it...
-	// into pizza time v2 as his own lil update before!
-	
-	if not PTV3_V.beginningsector and p.mo then
-		PTV3_V.beginningsector = p.mo.subsector.sector
+	if PTV3_F.IsGametype() then
+		hudinfo[HUD_TIME].x = 160 - 12
+		hudinfo[HUD_TIME].y = 200 - 12
+		hudinfo[HUD_TIME].f = V_SNAPTOBOTTOM
+		
+		hudinfo[HUD_MINUTES].x = 160 - 4
+		hudinfo[HUD_MINUTES].y = (200 - 12) - 16
+		hudinfo[HUD_MINUTES].f = V_SNAPTOTOP
+		
+		hudinfo[HUD_TIMECOLON].x = 160 - 4
+		hudinfo[HUD_TIMECOLON].y = (200 - 12) - 16
+		hudinfo[HUD_TIMECOLON].f = V_SNAPTOTOP
+		
+		hudinfo[HUD_SECONDS].x = (160 - 4) + 24
+		hudinfo[HUD_SECONDS].y = (200 - 12) - 16
+		hudinfo[HUD_SECONDS].f = V_SNAPTOTOP
+		
+		hudinfo[HUD_RINGS].y = 26
+		hudinfo[HUD_RINGSNUM].y = 26
+		hudinfo[HUD_RINGSNUMTICS].y = 26
+	else
+		hudinfo[HUD_TIME].x = 16
+		hudinfo[HUD_TIME].y = 26
+		hudinfo[HUD_TIME].f = V_SNAPTOLEFT|V_SNAPTOTOP
+		
+		hudinfo[HUD_MINUTES].x = 72
+		hudinfo[HUD_MINUTES].f = V_SNAPTOLEFT|V_SNAPTOTOP
+		
+		hudinfo[HUD_TIMECOLON].x = 72
+		hudinfo[HUD_TIMECOLON].f = V_SNAPTOLEFT|V_SNAPTOTOP
+		
+		hudinfo[HUD_SECONDS].x = 96
+		hudinfo[HUD_SECONDS].f = V_SNAPTOLEFT|V_SNAPTOTOP
+		
+		hudinfo[HUD_RINGS].y = 42
+		hudinfo[HUD_RINGSNUM].y = 42
+		hudinfo[HUD_RINGSNUMTICS].y = 42
 	end
-	// this is so we can get the players spawn point so we can actually add laps n stuff
 end
-
-// now, let's actually get this going
-
-// this function is to choose a pizzaface for when pizza time starts
+PTV3_F.Initialize()
 PTV3_F.Choose_Pizzaface = function(p)
 	local pizzaface_chosen = false
 	local players_count = 0
@@ -60,32 +70,39 @@ PTV3_F.Choose_Pizzaface = function(p)
 	end
 	
 	if players_count < 2 then
-		// new pizzaface ai shit here
 		return
 	end
 	
 	while not pizzaface_chosen do
 		local pfnum = P_RandomKey(0, #players)
-		// get a random player without iterating through players.iterate
 		local pfp = players[pfnum]
-		// and to prevent unreadable code, localize pfp as this
 		
 		if not pfp then continue end
 		if not pfp.valid then continue end
 		if pfp == p then continue end
+		if not pfp.ptv3 then PTV3_F.Initialize_Player(p) end
 
+		pfp.ptv3.pizzaface = true
 		pizzaface_chosen = true
-		// save this for whenever we actually need pizzaface to be in the game
 		break
 	end
 end
-
-// this function is to start pizza time, ran when the player hits pillar john.
 PTV3_F.StartPizzaTime = function(p)
 	if PTV3_V.pizzatime then return end
 	
 	PTV3_F.Choose_Pizzaface(p)
 	PTV3_V.pizzatime = true
-	S_ChangeMusic("PIZTIM", true)
+	S_ChangeMusic("PTDECI", true)
 end
-// from here, head over to hooks
+PTV3_F.StartNewLap = function(p)
+	if not PTV3_V.pizzatime then return end
+	
+	p.ptv3.laps = $+1
+	p.ptv3.canlap = false
+	local sec = PTV3_V.endcoords
+	if not sec then print('no sex :(') return end
+	P_SetOrigin(p.mo, sec.x, sec.y, sec.z)
+	p.mo.angle = sec.a
+	PTV3_F.HUD_NewLap()
+	S_ChangeMusic('PTDECI', true, p)
+end

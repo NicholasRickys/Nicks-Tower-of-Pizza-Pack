@@ -12,9 +12,11 @@ G_AddGametype({
     headercolor = 103,
     description = "pita time vee 3 es the bet."
 })
+
 dofile "Pizza Time/Functions"
 dofile "Pizza Time/Hooks"
 dofile "Pizza Time/Music"
+dofile "Pizza Time/HUD"
 
 //// NTOPP ////
 

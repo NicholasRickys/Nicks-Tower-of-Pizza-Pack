@@ -13,6 +13,11 @@ fsmstates[enums.LONGJUMP]['npeppino'] = {
 			end
 		end
 		
+		if WallCheckHelper(player) and not P_IsObjectOnGround(player.mo) then
+			fsm.ChangeState(player, enums.WALLCLIMB)
+			return
+		end
+		
 		if (P_IsObjectOnGround(player.mo)) then
 			fsm.ChangeState(player, GetMachSpeedEnum(player.pvars.movespeed))
 		end

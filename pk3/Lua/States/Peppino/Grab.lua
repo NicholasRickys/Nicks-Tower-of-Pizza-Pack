@@ -26,6 +26,12 @@ fsmstates[enums.GRAB]['npeppino'] = {
 				player.pvars.groundedgrab = false
 			end
 			
+			if WallCheckHelper(player) and not P_IsObjectOnGround(player.mo) then
+				fsm.ChangeState(player, enums.WALLCLIMB)
+				player.pvars.movespeed = 12*FU
+				return
+			end
+			
 			if (player.pvars.groundedgrab) then
 				if (player.pvars.grabtime) then
 					player.pvars.grabtime = $-1
@@ -47,6 +53,10 @@ fsmstates[enums.GRAB]['npeppino'] = {
 					end
 					
 					if P_IsObjectOnGround(player.mo) then
+						if (player.cmd.buttons & BT_CUSTOM2) then
+							fsm.ChangeState(player, enums.BELLYSLIDE)
+							return
+						end
 						if player.pvars.laststate == enums.BASE and player.cmd.buttons & BT_SPIN then
 							player.pvars.laststate = GetMachSpeedEnum(player.pvars.movespeed)
 						end
