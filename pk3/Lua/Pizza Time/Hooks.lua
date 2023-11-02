@@ -8,7 +8,6 @@ addHook('MapLoad', function()
 	for t in mapthings.iterate do
 		if t.type == 501 then
 			PTV3_V.endcoords = {x = t.x*FU, y = t.y*FU, z = t.z*FU, a = t.angle*ANG1}
-			print('end')
 		end
 		if t.type == 1 then
 			if PTV3_V.beginningsector then continue end
@@ -29,6 +28,12 @@ local function Timer()
 	
 	
 	if not PTV3_V.timer then
+		for p in players.iterate do
+			if not p.exiting then
+				p.pflags = PF_GAMETYPEOVER
+			end
+		end
+		
 		G_ExitLevel()
 		return
 	end
@@ -50,10 +55,9 @@ addHook('ThinkFrame', do
 		end
 	end
 	
-	if (PTV3_V.timer <= 219*TICRATE) and not PTV3_V.hurryup and PTV3_V.pizzatime then
+	if (PTV3_V.timer <= (60+35)*TICRATE) and not PTV3_V.hurryup and PTV3_V.pizzatime then
 		PTV3_V.hurryup = true
-		print('hurry up')
-		S_ChangeMusic('HURRUP', true)
+		S_ChangeMusic('HURRUP', true, consoleplayer)
 	end
 	
 	Timer()
@@ -70,7 +74,7 @@ addHook('MobjLineCollide', function(mobj, line)
 	
 	if sector == PTV3_V.beginningsector then
 		P_DoPlayerExit(mobj.player)
-		mobj.player.ptv3.canlap = true
+		mobj.player.ptv3.canlap = (mobj.player.ptv3.laps < PTV3_V.maxlaps)
 	end
 end, MT_PLAYER)
 

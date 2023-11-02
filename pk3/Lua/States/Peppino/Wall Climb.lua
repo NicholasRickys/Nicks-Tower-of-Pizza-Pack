@@ -14,8 +14,8 @@ fsmstates[enums.WALLCLIMB]['npeppino'] = {
 		
 		local atwall = 0
 		
-		//Finding walls (not FOFs)
-		//code from ssnmighty by man553, shoutouts to my bro
+		--Finding walls (not FOFs)
+		--code from ssnmighty by man553, shoutouts to my bro
 		local wall = R_PointInSubsector(player.mo.x+FixedMul(26*FRACUNIT, cos(player.mo.angle)), player.mo.y+FixedMul(26*FRACUNIT, sin(player.mo.angle))).sector
 		local fheight = wall.floorheight
 		local cheight = wall.ceilingheight
@@ -26,14 +26,18 @@ fsmstates[enums.WALLCLIMB]['npeppino'] = {
 		if wall.c_slope then
 			cheight = P_GetZAt(wall.c_slope, player.mo.x + player.mo.momx, player.mo.y + player.mo.momy)
 		end
-		
-		if (fheight > player.mo.z) or ((cheight <= player.mo.height+player.mo.z) and not (fheight == cheight)/* and (wall.ceilingpic == "F_SKY1")*/) //This last bit seems to be broken...
+
+		if (fheight > player.mo.z) or ((cheight <= player.mo.height+player.mo.z) and not (fheight == cheight)/* and (wall.ceilingpic == "F_SKY1")*/) --This last bit seems to be broken...
 			atwall = 1
 		end
-		//FOFs can be walls too, so lets check for those
+
+		if wall.f_slope ~= nil and wall.f_slope == player.mo.standingslope then
+			atwall = 0
+		end
+		--FOFs can be walls too, so lets check for those
 		for wall in wall.ffloors()
 			if (player.mo.z <= wall.topheight) and (player.mo.height+player.mo.z > wall.bottomheight)
-				and(wall.flags & FF_BLOCKPLAYER) //Don't want the player to cling to water. That would be stupid
+				and(wall.flags & FF_BLOCKPLAYER) --Don't want the player to cling to water. That would be stupid
 				atwall = $ + 1
 			end		
 		end

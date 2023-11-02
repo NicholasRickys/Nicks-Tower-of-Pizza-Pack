@@ -2,6 +2,7 @@
 
 rawset(_G, "PTV3_V", {})
 rawset(_G, "PTV3_F", {})
+rawset(_G, "PTV3_CV", {})
 
 G_AddGametype({
     name = "Pizza Time",
@@ -13,6 +14,7 @@ G_AddGametype({
     description = "pita time vee 3 es the bet."
 })
 
+dofile "Pizza Time/CVars"
 dofile "Pizza Time/Functions"
 dofile "Pizza Time/Hooks"
 dofile "Pizza Time/Music"
@@ -28,7 +30,6 @@ rawset(_G, 'L_Choose', function(...)
 	return args[choice]
 end)
 
-dofile('Key Handler.lua')
 dofile('Freeslot.lua')
 dofile('Enums.lua')
 dofile('TV.lua')
@@ -38,31 +39,32 @@ dofile('FSM.lua')
 dofile('Hooks.lua')
 dofile('Functions.lua')
 
-local path = "States/Peppino/"
+for _,p in ipairs({'Peppino', 'The Noise'}) do
+	local path = "States/"..p.."/"
+	dofile(path..'Base.lua')
 
-dofile(path..'Base.lua')
+	for i = 1,3 do
+		dofile(path.."Machs/"..i..".lua")
+	end
 
-for i = 1,3 do
-	dofile(path.."Machs/"..i..".lua")
+	dofile(path.."Skid.lua")
+	dofile(path.."Drift.lua")
+
+	dofile(path.."Grab.lua")
+	dofile(path.."Grabbed Enemy.lua")
+	dofile(path.."Kill Enemy.lua")
+	dofile(path.."Long Jump.lua")
+
+	dofile(path.."Crouch.lua")
+	dofile(path.."Roll.lua")
+	dofile(path..'Dive.lua')
+	dofile(path..'Belly Slide.lua')
+
+	dofile(path.."Super Jump.lua")
+
+	dofile(path.."Pain.lua")
+
+	dofile(path.."Wall Climb.lua")
+
+	dofile(path.."Body Slam.lua")
 end
-
-dofile(path.."Skid.lua")
-dofile(path.."Drift.lua")
-
-dofile(path.."Grab.lua")
-dofile(path.."Grabbed Enemy.lua")
-dofile(path.."Kill Enemy.lua")
-dofile(path.."Long Jump.lua")
-
-dofile(path.."Crouch.lua")
-dofile(path.."Roll.lua")
-dofile(path..'Dive.lua')
-dofile(path..'Belly Slide.lua')
-
-dofile(path.."Super Jump.lua")
-
-dofile(path.."Pain.lua")
-
-dofile(path.."Wall Climb.lua")
-
-dofile(path.."Body Slam.lua")

@@ -33,10 +33,10 @@ fsm.ChangeState = function(player, state)
 	local old_state = fsmstates[player.fsm.state] and fsmstates[player.fsm.state][player.mo.skin]
 	local new_state = fsmstates[state] and fsmstates[state][player.mo.skin]
 	
-	if (old_state and not old_state.no_code and old_state.exit) then
+	if (old_state and old_state.exit) then
 		old_state:exit(player, state) // so we can reference the new state upon exit, useful for transitioning n such
 	end
-	if (new_state and not new_state.no_code and new_state.enter) then
+	if (new_state and new_state.enter) then
 		new_state:enter(player, player.fsm.state)
 	end
 	

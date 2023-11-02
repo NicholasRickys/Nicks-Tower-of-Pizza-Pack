@@ -1,9 +1,11 @@
 local laptime = 0
 local lapy = 0
+local can_drawlap = false
 
 PTV3_F.HUD_NewLap = function()
 	laptime = 0
 	lapy = 0
+	can_drawlap = true
 end
 
 local function getdawidth(num)
@@ -85,7 +87,10 @@ end
 local function HUD_LAPS(v,p,c) end
 local function HUD_TIMER(v,p,c) end
 local function HUD_WTSPLAYERS(v,p,c) end
-local function HUD_OBJECTIVES(v,p,c) end
+local function HUD_OBJECTIVES(v,p,c)
+	if not PTV3_V.pizzatime then return end
+	v.drawString(160, 158, "Objective: we didnt work on them yet", V_SNAPTOBOTTOM, "thin-center")
+end
 
 PTV3_F.HudInit = function(p)
 	if not p.ptv3 then return end
@@ -97,10 +102,32 @@ local function HUD_DRAW(v,p,c)
 	HUD_FAKETIMER(v,p,c)
 	HUD_ITSPIZZATIME(v,p,c)
 	HUD_HURRYUP(v,p,c)
+	HUD_OBJECTIVES(v,p,c)
 end
 local function HUD_THINK(p)
 	if not p.ptv3 then return end
 	if not p.ptv3.hud then PTV3_F.HudInit(p) end
+	
+	hudinfo[HUD_TIME].x = 160 - 12
+	hudinfo[HUD_TIME].y = 200 - 12
+	hudinfo[HUD_TIME].f = V_SNAPTOBOTTOM
+	
+	hudinfo[HUD_MINUTES].x = 160 - 4
+	hudinfo[HUD_MINUTES].y = (200 - 12) - 16
+	hudinfo[HUD_MINUTES].f = V_SNAPTOBOTTOM
+	
+	hudinfo[HUD_TIMECOLON].x = 160 - 4
+	hudinfo[HUD_TIMECOLON].y = (200 - 12) - 16
+	hudinfo[HUD_TIMECOLON].f = V_SNAPTOBOTTOM
+	
+	hudinfo[HUD_SECONDS].x = (160 - 4) + 24
+	hudinfo[HUD_SECONDS].y = (200 - 12) - 16
+	hudinfo[HUD_SECONDS].f = V_SNAPTOBOTTOM
+	
+	hudinfo[HUD_RINGS].y = 26
+	hudinfo[HUD_RINGSNUM].y = 26
+	hudinfo[HUD_RINGSNUMTICS].y = 26
+	
 	THINKER_ITSPIZZATIME(p)
 	THINKER_HURRYUP(p)
 end

@@ -1,8 +1,12 @@
+local function isPTSkin(skin)
+	return (skin == "npeppino" or skin == "nthe_noise")
+end
+
 addHook('PlayerThink', function(player)
 	if not (player.mo) then player.tv_animations = nil return end
 	if not (player.fsm) then player.tv_animations = nil return end
 	if not (player.pvars) then player.tv_animations = nil return end
-	if (player.mo.skin ~= "npeppino") then player.tv_animations = nil return end
+	if (not isPTSkin(player.mo.skin)) then player.tv_animations = nil return end
 	if (not player.tv_animations) then
 		if (leveltime > TICRATE/2) then
 			tv.AddAnimation(player, 'TV', 'TV_OPEN', 2, 16, false,
@@ -44,8 +48,8 @@ addHook('MapChange', function()
 end)
 
 addHook('HUD', function(v, player, camera)
-	if (player.mo and player.mo.skin == 'npeppino')
-		v.drawString(320/2, 4, 'https://discord.gg/5TvYjFvWEy', V_TRANSLUCENT|V_ALLOWLOWERCASE, 'thin-center')
+	if (player.mo and isPTSkin(player.mo.skin))
+		v.drawString(160, 4, 'https://discord.gg/5TvYjFvWEy', V_TRANSLUCENT|V_ALLOWLOWERCASE|V_SNAPTOTOP, 'thin-center')
 	end
 
 	if (not player.tv_animations) then return end
@@ -62,7 +66,7 @@ addHook('HUD', function(v, player, camera)
 end)
 
 addHook('PlayerThink', function(player)
-	if not (player.mo and player.mo.skin == "npeppino") then
+	if not (player.mo and isPTSkin(player.mo.skin)) then
 		player.fsm = nil
 		player.pvars = nil
 		player.laststate = nil
@@ -80,7 +84,6 @@ addHook('PlayerThink', function(player)
 
 	if (fsmstates[player.fsm.state]
 	and fsmstates[player.fsm.state][player.mo.skin]
-	and not fsmstates[player.fsm.state][player.mo.skin].no_code
 	and fsmstates[player.fsm.state][player.mo.skin].think) then
 		fsmstates[player.fsm.state][player.mo.skin]:think(player)
 	end
@@ -135,7 +138,7 @@ addHook('MobjMoveCollide', function(mo, mobj)
 	local player = mo.player
 	if (not player.mo) then return end
 	if not (mobj) then return end
-	if (player.mo.skin ~= 'npeppino') then return end
+	if (not isPTSkin(player.mo.skin)) then return end
 	if (not player.fsm) then return end
 	if (not player.pvars) then return end
 	if (not mobj.valid) then return end
@@ -175,7 +178,7 @@ addHook('MobjMoveCollide', function(mo, mobj)
 	local player = mo.player
 	if (not player.mo) then return end
 	if not (mobj.valid) then return end
-	if (player.mo.skin ~= 'npeppino') then return end
+	if (not isPTSkin(player.mo.skin)) then return end
 	if (not player.fsm) then return end
 	if (not player.pvars) then return end
 	
@@ -255,7 +258,7 @@ addHook('PreThinkFrame', do
 	for player in players.iterate do
 		if not (player.mo) then continue end
 		if not (player.cmd) then continue end
-		if (player.mo.skin ~= 'npeppino') then continue end
+		if (not isPTSkin(player.mo.skin)) then continue end
 		if not (player.fsm) then continue end
 		if not (player.pvars) then continue end
 		if (player.fsm.state == enums.MACH3 or player.fsm.state == enums.MACH2) then
@@ -284,7 +287,7 @@ addHook('MobjDamage', function(target, inflictor, source)
 	if not target.player.mo then return end // check to see if the players mo isnt invalid
 	local player = target.player
 	
-	if player.mo.skin ~= 'npeppino' then return end
+	if not isPTSkin(player.mo.skin) then return end
 	if player.fsm and player.fsm.state == enums.GRAB then
 		return true
 	end
@@ -337,7 +340,7 @@ end, MT_GRABBEDMOBJ)
 addHook('PlayerCanDamage', function(player, mobj)
 	if (not player.mo) then return end
 	if (not mobj.valid) then return end
-	if (player.mo.skin ~= 'npeppino') then return end
+	if (not isPTSkin(player.mo.skin)) then return end
 	if (not player.fsm) then return end
 	if (not player.pvars) then return end
 	if (mobj.z > player.mo.z+player.mo.height) then return end
@@ -433,7 +436,7 @@ end)
 addHook('ThinkFrame', do
 	for player in players.iterate do
 		if not player.mo then continue end
-		if not player.mo.skin == 'npeppino' then continue end
+		if not isPTSkin(player.mo.skin) then continue end
 		if not player.fsm then continue end
 		if not player.pvars then continue end
 		

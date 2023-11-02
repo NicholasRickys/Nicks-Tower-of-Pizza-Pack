@@ -16,12 +16,19 @@ fsmstates[enums.BODYSLAM]['npeppino'] = {
 			end
 		end
 		
-		player.mo.momz = $-(FU)
+		local grounded = false
+		if P_MobjFlip(player.mo) == 1 then
+			grounded = (player.mo.z <= player.mo.floorz)
+		else
+			grounded = P_IsObjectOnGround(player.mo)
+		end
+		if not grounded then L_ZLaunch(player.mo, -FU, true) end
 		
-		if P_IsObjectOnGround(player.mo) then
+		if grounded then
 			player.pflags = $|PF_FULLSTASIS
+			player.cmd.forwardmove = 0
+			player.cmd.sidemove = 0
 			player.pvars.forcedstate = S_PEPPINO_BODYSLAMLAND
-			player.mo.state = S_PEPPINO_BODYSLAMLAND
 			player.mo.momx = 0
 			player.mo.momy = 0
 			if not player.pvars.hitfloor then

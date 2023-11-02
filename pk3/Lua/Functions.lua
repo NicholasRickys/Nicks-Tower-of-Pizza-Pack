@@ -24,15 +24,20 @@ rawset(_G, "WallCheckHelper", function(player) //unused for the most part, damn.
 		cheight = P_GetZAt(wall.c_slope, player.mo.x + player.mo.momx, player.mo.y + player.mo.momy)
 	end
 	
-	if wall ~= player.mo.standingslope and (fheight > player.mo.z) or ((cheight <= player.mo.height+player.mo.z) and not (fheight == cheight)/* and (wall.ceilingpic == "F_SKY1")*/) //This last bit seems to be broken...
+	if wall and (fheight > player.mo.z) or ((cheight <= player.mo.height+player.mo.z) and not (fheight == cheight)/* and (wall.ceilingpic == "F_SKY1")*/) //This last bit seems to be broken...
 		atwall = 1
 	end
 	//FOFs can be walls too, so lets check for those
 	for wall in wall.ffloors()
 		if (player.mo.z <= wall.topheight) and (player.mo.height+player.mo.z > wall.bottomheight)
-			and(wall.flags & FF_BLOCKPLAYER) //Don't want the player to cling to water. That would be stupid
+			and(wall.flags & FF_EXISTS)
+			and not (wall.flags & FF_CUTSPRITES)
+			and(wall.flags & FF_SOLID or wall.flags & FF_BLOCKPLAYER) //Don't want the player to cling to water. That would be stupid
 			atwall = $ + 1
 		end		
+	end
+	if wall.f_slope and f_slope == player.mo.standingslope then
+		atwall = 0
 	end
 	return atwall
 end)
