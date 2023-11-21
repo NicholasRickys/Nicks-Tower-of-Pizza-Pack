@@ -1,8 +1,8 @@
 const fs = require("fs");
 const path = require('path');
-const JSZip = require("jszip");
-const argparse = require('argparse');
-const { folder } = require("jszip");
+const JSZip = require("/data/data/com.termux/files/usr/lib/node_modules/jszip");
+const argparse = require('/data/data/com.termux/files/usr/lib/node_modules/argparse');
+const { folder } = require("/data/data/com.termux/files/usr/lib/node_modules/jszip");
 const lumpimlib = require("./lumpimlib.js")
 
 let parser = new argparse.ArgumentParser({
@@ -81,11 +81,6 @@ function doTheFolder(zipfolder, folderpath, relpath) {
             let subfolder = zipfolder.folder(item.name)
             doTheFolder(subfolder, path.join(folderpath, item.name), path.join(relpath, item.name))
         } else {
-            if (item.name.endsWith(".png")) {
-                console.log(`\x1b[34;1mConverting ${path.join(relpath, item.name)}...\x1b[0m`)
-                item.name = item.name.slice(0, -4)
-                item.data = lumpimlib.png2lmp(item.name, item.data)
-            }
             zipfolder.file(item.name, item.data)
         }
     })

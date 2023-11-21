@@ -1,5 +1,5 @@
-const deasync = require('deasync')
-const Jimp = require("jimp")
+const deasync = require('/data/data/com.termux/files/usr/lib/node_modules/deasync')
+const Jimp = require("/data/data/com.termux/files/usr/lib/node_modules/jimp")
 const pallete = require("./pallete.js")
 
 const TRANSTHRESH = 100
@@ -25,8 +25,20 @@ function colorDist(rgb1, rgb2) {
     return Math.hypot(rgb1[0] - rgb2[0], rgb1[1] - rgb2[1], rgb1[2] - rgb2[2])
 }
 
+function colorReplace(palettenum, colors) {
+    for (const color of colors)
+    {
+      if (color[0] == palettenum)
+      {
+        console.log(`replaced ${palettenum} with ${color[1]}`)
+        return color[1]
+      }
+    }
+    return palettenum
+}
+
 let closestCache = {}
-function closestOnPalette(rgb) {
+function closestOnPalette(rgb, newcolor) {
     if (closestCache[rgb]) return closestCache[rgb]
 
     let result = -1
@@ -41,6 +53,14 @@ function closestOnPalette(rgb) {
     }
 
     closestCache[rgb] = result
+    console.log('eh')
+    
+    if (newcolor != null)
+    {
+      console.log('weeee')
+      result = colorReplace(result, newcolor)
+    }
+    
     return result
 }
 
@@ -49,7 +69,7 @@ function closestOnPalette(rgb) {
  * @param {Jimp} jimage 
  * @param {*} colno 
  */
-function genColumn(jimage, x) {
+function genColumn(jimage, x, color) {
     let posts = []
     let activePost = null
     let imHeight = jimage.getHeight()
@@ -64,8 +84,11 @@ function genColumn(jimage, x) {
                 }
             }
             activePost.length += 1
-            activePost.data.push(closestOnPalette(pixColor.slice(0, 3)))
+            activePost.data.push(closestOnPalette(pixColor.slice(0, 3), color))
         } else if (activePost) {
+            if (color != null)
+              for (let i = 0; i < activePost.data.length; i++)
+                activePost.data[i] = colorReplace(activePost.data[i], color)
             posts.push(activePost)
             activePost = null
         }
@@ -73,6 +96,7 @@ function genColumn(jimage, x) {
     let buf = Buffer.alloc(1 + posts.map(post => 4 + post.length).reduce((a, b) => a+b, 0))
     let off = 0
     posts.forEach(post => {
+        ///if (color != null) post.data = colorReplace(post.data, color)
         buf.writeUInt8(post.topdelta, off)
         buf.writeUInt8(post.length, off+1)
         //don't write the unused offset+2 byte
@@ -85,7 +109,7 @@ function genColumn(jimage, x) {
     return buf
 }
 
-function jimage2lmp(jimage, offset) {
+function jimage2lmp(jimage, offset, color) {
     let headbuf = Buffer.alloc(8 + 4*jimage.getWidth())
     headbuf.writeUInt16LE(jimage.getWidth(), 0)
     headbuf.writeUInt16LE(jimage.getHeight(), 2)
@@ -94,7 +118,7 @@ function jimage2lmp(jimage, offset) {
     let coldat = []
     for (let x = 0; x < jimage.getWidth(); x++) {
         headbuf.writeUInt32LE(headbuf.byteLength + coldat.length, 8 + 4*x)
-        coldat = coldat.concat([...genColumn(jimage, x)])
+        coldat = coldat.concat([...genColumn(jimage, x, color)])
         //console.log(coldat)
     }
     return Buffer.from([...headbuf, ...coldat])
@@ -149,7 +173,12 @@ function png2lmp(name, pngbuf) {
         Math.floor(jimage.getWidth()/2), Math.floor(jimage.getHeight()/2)
     ]
     let off = getPNGOffset(pngbuf) ?? offsetDefault
-    return jimage2lmp(jimage, off) // TODO: actually get the offset
+    return jimage2lmp(jimage, off) // TODO: actually get the offset* @param {buffer} pngbuf 
 }
 
-module.exports = { png2lmp, colorDist, pallete, closestOnPalette, closestCache }
+function png2lmp_manualoffset(pngbuf, offset, color) {
+    let jimage = deasync(Jimp.read)(pngbuf)
+    return jimage2lmp(jimage, offset, color) // TODO: actually get the offset
+}
+
+module.exports = { png2lmp, png2lmp_manualoffset, colorDist, pallete, closestOnPalette, closestCache }

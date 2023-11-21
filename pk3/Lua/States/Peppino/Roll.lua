@@ -1,15 +1,8 @@
-local function GetRollShit(movespeed)
-	if movespeed <= 18*FU then return S_PEPPINO_ROLLGETUP1 end
-	if movespeed >= 40*FU then return S_PEPPINO_ROLLGETUP3 end
-	
-	return S_PEPPINO_ROLLGETUP2
-end
-
-fsmstates[enums.ROLL]['npeppino'] = {
+fsmstates[ntopp_v2.enums.ROLL]['npeppino'] = {
 	name = "Roll",
 	enter = function(self, player)
 		player.pvars.forcedstate = S_PEPPINO_ROLL
-		player.pvars.angle = player.drawangle
+		player.pvars.drawangle = player.drawangle
 		player.pflags = $|PF_SPINNING
 	end,
 	think = function(self, player)
@@ -26,23 +19,25 @@ fsmstates[enums.ROLL]['npeppino'] = {
 			player.pvars.slidetime = $-1
 		end
 		
-		player.drawangle = player.pvars.angle
+		player.drawangle = player.pvars.drawangle
 		
-		P_InstaThrust(player.mo, player.drawangle, player.pvars.movespeed)
+		if not (leveltime % 4) then
+			TGTLSGhost(player)
+		end
+		P_InstaThrust(player.mo, player.drawangle, FixedMul(player.pvars.movespeed, player.mo.scale))
 		P_MovePlayer(player)
 		
 		if not P_IsObjectOnGround(player.mo) then
-			fsm.ChangeState(player, enums.DIVE)
+			fsm.ChangeState(player, ntopp_v2.enums.DIVE)
 			return
 		end
 		
 		if not (player.cmd.buttons & BT_CUSTOM2) and P_IsObjectOnGround(player.mo) and not (player.pvars.slidetime) then
 			fsm.ChangeState(player, GetMachSpeedEnum(player.pvars.movespeed))
-			player.mo.state = GetRollShit(player.pvars.movespeed) // LMFAO WE NEED THIS DUE TO TRANSITION SHIT RIP FREESLOT SHIT
 		end
 	end,
 	exit = function(self, player, state)
-		if (state == enums.BASE) then
+		if (state == ntopp_v2.enums.BASE) then
 			player.pvars.movespeed = 8*FU
 			if (player.mo) then
 				player.mo.momx = 0
@@ -50,5 +45,6 @@ fsmstates[enums.ROLL]['npeppino'] = {
 			end
 		end
 		player.pflags = $ & ~PF_SPINNING
+		player.pvars.drawangle = nil
 	end
 }

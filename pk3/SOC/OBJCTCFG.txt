@@ -1,9 +1,16 @@
 Character
 SkinName = npeppino
-DisplayName = pep
+DisplayName = Peppino
 TagTextColor = SKINCOLOR_WHITE
 TagOutlineColor = SKINCOLOR_BLACK
-OppositeColor = SKINCOLOR_PURPLE
-PlayerText = Placing the holder!
+OppositeColor = SKINCOLOR_ORANGE
+PlayerText = Peppino is the fastest out of the main cast. But in return, he's a very complex character.
 
+Custom 1 - Grab
+Custom 2 - Down Action
+Custom 3 - Up Action
+Fire (Non-competitive modes) - Taunt
+Fire Normal (Non-competitive modes) - Breakdance
+
+Tip: One move always leads to another, make use of your abilities to be the fastest you can be!
 #

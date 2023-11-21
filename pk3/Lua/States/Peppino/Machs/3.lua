@@ -1,9 +1,21 @@
-fsmstates[enums.MACH3]['npeppino'] = {
+local function IsMach4(speed)
+	return (speed >= 60*FU)
+end
+
+local function NerfAbility()
+	return (ntopp_v2.NERFED_PEPPINO_IN_OTHER.value 
+	and (gametyperules & GTR_RACE or G_RingSlingerGametype()))
+	or (ntopp_v2.NERFED_PEPPINO_IN_COOP.value
+	and G_CoopGametype())
+end
+
+fsmstates[ntopp_v2.enums.MACH3]['npeppino'] = {
 	name = "Mach 3",
 	enter = function(self, player)
 		player.pvars.forcedstate = S_PEPPINO_MACH3
 		player.pvars.drawangle = player.drawangle
-		player.pvars.jumppressed = false
+		player.pvars.jumppressed = P_IsObjectOnGround(player.mo)
+		player.charflags = $|SF_RUNONWATER|SF_CANBUSTWALLS
 	end,
 	think = function(self, player)
 		if not (player.mo) then return end
@@ -14,9 +26,10 @@ fsmstates[enums.MACH3]['npeppino'] = {
 			end
 		end
 		
-		if WallCheckHelper(player) and not P_IsObjectOnGround(player.mo) then
-			fsm.ChangeState(player, enums.WALLCLIMB)
-			return
+		if IsMach4(player.pvars.movespeed) then
+			player.pvars.forcedstate = S_PEPPINO_MACH4
+		elseif not (player.pvars.forcedstate == S_PEPPINO_SUPERJUMPCANCEL)
+			player.pvars.forcedstate = S_PEPPINO_MACH3
 		end
 		
 		if (player.pvars.jumppressed and P_IsObjectOnGround(player.mo) and not (player.cmd.buttons & BT_JUMP)) then
@@ -26,21 +39,20 @@ fsmstates[enums.MACH3]['npeppino'] = {
 		if (P_IsObjectOnGround(player.mo)) then
 			player.pvars.mach_jump_deb = false
 			if (player.cmd.forwardmove or player.cmd.sidemove) then
-				player.pvars.movespeed = $+(FU/12)
-			elseif (player.pvars.movespeed > 40*FU)
-				player.pvars.movespeed = min(40*FU, $-(FU/12))
+				local add = player.powers[pw_sneakers] and FU + (FU/2) or 0
+				if (NerfAbility()) then
+					player.pvars.movespeed = min(46*FU, $+(FU/6))
+				else
+					player.pvars.movespeed = $+(FU/5)+add
+				end
+			else
+				player.pvars.movespeed = max(40*FU, $-(FU/6))
 			end
 			
 			if (player.pvars.forcedstate == S_PEPPINO_SUPERJUMPCANCEL) then
-				player.pvars.forcedstate = S_PEPPINO_MACH3
+				player.pvars.forcedstate = IsMach4(player.pvars.movespeed) and S_PEPPINO_MACH4 or S_PEPPINO_MACH3
 			end
 		end
-		
-		if (not P_IsObjectOnGround(player.mo) and player.pflags & PF_JUMPED and player.cmd.buttons & BT_JUMP and not (player.pvars.jumppressed)) then
-			player.mo.state = S_PEPPINO_MACH3JUMP
-			player.pvars.jumppressed = true
-		end
-		
 		local supposeddrawangle = player.pvars.drawangle
 		if supposeddrawangle == nil then supposeddrawangle = player.drawangle end
 		
@@ -67,38 +79,68 @@ fsmstates[enums.MACH3]['npeppino'] = {
 			d1.state = S_INVISIBLE
 			d2.state = S_INVISIBLE
 		end
-		
-		P_InstaThrust(player.mo, player.drawangle, player.pvars.movespeed)
+		if not (leveltime % 4) then
+			TGTLSAfterImage(player)
+		end
+		P_InstaThrust(player.mo, player.drawangle, FixedMul(player.pvars.movespeed, player.mo.scale))
 		P_MovePlayer(player)
 		
-		if (player.cmd.buttons & BT_CUSTOM2) and not P_IsObjectOnGround(player.mo) then
-			fsm.ChangeState(player, enums.DIVE)
+		if (player.powers[pw_justlaunched]) then
+			fsm.ChangeState(player, ntopp_v2.enums.MACH2)
+			player.pvars.forcedstate = S_PEPPINO_SLOPEJUMP
 		end
 		
-		if ((player.cmd.buttons & BT_CUSTOM1 and not (player.prevkeys and player.prevkeys & BT_CUSTOM1))) then
-			fsm.ChangeState(player, enums.GRAB)
+		if (player.cmd.buttons & BT_CUSTOM2) and not P_IsObjectOnGround(player.mo) then
+			fsm.ChangeState(player, ntopp_v2.enums.DIVE)
+		end
+		
+		if not (player.gotflag) and ((player.cmd.buttons & BT_CUSTOM1 and not (player.prevkeys and player.prevkeys & BT_CUSTOM1))) then
+			if (not P_IsObjectOnGround(player.mo) and player.cmd.buttons & BT_CUSTOM3) then
+				fsm.ChangeState(player, ntopp_v2.enums.UPPERCUT)
+				return
+			end
+			fsm.ChangeState(player, ntopp_v2.enums.GRAB)
 			return
 		end
 		
-		if (player.cmd.buttons & BT_CUSTOM3) and P_IsObjectOnGround(player.mo) then
-			fsm.ChangeState(player, enums.SUPERJUMPSTART)
+		if not (player.gotflag) and (player.cmd.buttons & BT_CUSTOM3) and P_IsObjectOnGround(player.mo) then
+			fsm.ChangeState(player, ntopp_v2.enums.SUPERJUMPSTART)
 			return
 		end
 		
 		if (player.cmd.buttons & BT_CUSTOM2 and P_IsObjectOnGround(player.mo)) then
-			fsm.ChangeState(player, enums.ROLL)
+			fsm.ChangeState(player, ntopp_v2.enums.ROLL)
 		end
 		
 		if (not (player.cmd.buttons & BT_SPIN) and P_IsObjectOnGround(player.mo)) then
-			fsm.ChangeState(player, enums.SKID)
+			fsm.ChangeState(player, ntopp_v2.enums.SKID)
+		end
+		
+		if NerfAbility() then return end
+		
+		if player.pvars.supertauntready and player.cmd.buttons & BT_CUSTOM3 and (player.cmd.buttons & BT_ATTACK) and not (player.prevkeys and player.prevkeys & BT_ATTACK) then
+			fsm.ChangeState(player, ntopp_v2.enums.SUPERTAUNT)
+			return
+		end
+		
+		if (player.cmd.buttons & BT_ATTACK) and not (player.prevkeys and player.prevkeys & BT_ATTACK) then
+			fsm.ChangeState(player, ntopp_v2.enums.TAUNT)
+			return
+		end
+		
+		if (player.cmd.buttons & BT_FIRENORMAL) and not (player.prevkeys and player.prevkeys & BT_FIRENORMAL) then
+			fsm.ChangeState(player, ntopp_v2.enums.BREAKDANCESTART)
+			return
 		end
 		
 		/*if (player.pvars.movespeed >= (19*FU)) then
-			fsm.ChangeState(player, enums.MACH3)
+			fsm.ChangeState(player, ntopp_v2.enums.MACH3)
 		end*/
 	end,
 	exit = function(self, player, state)
 		player.pvars.jumppressed = nil
 		player.pvars.drawangle = nil
+		player.charflags = $ & ~SF_RUNONWATER
+		player.charflags = $ & ~SF_CANBUSTWALLS
 	end
 }

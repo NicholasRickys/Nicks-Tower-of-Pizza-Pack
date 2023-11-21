@@ -1,8 +1,14 @@
-fsmstates[enums.LONGJUMP]['npeppino'] = {
+local function NerfAbility()
+	return (ntopp_v2.NERFED_PEPPINO_IN_OTHER.value 
+	and (gametyperules & GTR_RACE or G_RingSlingerGametype()))
+	or (ntopp_v2.NERFED_PEPPINO_IN_COOP.value
+	and G_CoopGametype())
+end
+
+fsmstates[ntopp_v2.enums.LONGJUMP]['npeppino'] = {
 	name = "Long Jump",
 	enter = function(self, player)
 		player.pvars.forcedstate = S_PEPPINO_LONGJUMP
-		player.mo.state = S_PEPPINO_LONGJUMPTRNS
 	end,
 	think = function(self, player)
 		if not (player.mo) then return end
@@ -13,30 +19,41 @@ fsmstates[enums.LONGJUMP]['npeppino'] = {
 			end
 		end
 		
-		if WallCheckHelper(player) and not P_IsObjectOnGround(player.mo) then
-			fsm.ChangeState(player, enums.WALLCLIMB)
-			return
-		end
-		
 		if (P_IsObjectOnGround(player.mo)) then
 			fsm.ChangeState(player, GetMachSpeedEnum(player.pvars.movespeed))
+			return
 		end
 		
 		player.pvars.drawangle = player.drawangle
 		
-		P_InstaThrust(player.mo, player.drawangle, player.pvars.movespeed)
+		if not (leveltime % 4) then
+			TGTLSAfterImage(player)
+		end
+		P_InstaThrust(player.mo, player.drawangle, FixedMul(player.pvars.movespeed, player.mo.scale))
 		P_MovePlayer(player)
 		
 		if (player.cmd.buttons & BT_CUSTOM2) and not P_IsObjectOnGround(player.mo) then
-			fsm.ChangeState(player, enums.DIVE)
+			fsm.ChangeState(player, ntopp_v2.enums.DIVE)
 		end
 		
-		if (player.cmd.buttons & BT_CUSTOM1 and not (player.prevkeys and player.prevkeys & BT_CUSTOM1)) then
-			fsm.ChangeState(player, enums.GRAB)
+		if not (player.gotflag) and ((player.cmd.buttons & BT_CUSTOM1 and not (player.prevkeys and player.prevkeys & BT_CUSTOM1))) then
+			if (player.cmd.buttons & BT_CUSTOM3) then
+				fsm.ChangeState(player, ntopp_v2.enums.UPPERCUT)
+				return
+			end
+			fsm.ChangeState(player, ntopp_v2.enums.GRAB)
+			return
+		end
+		
+		if NerfAbility() then return end
+		
+		if (player.cmd.buttons & BT_ATTACK) and not (player.prevkeys and player.prevkeys & BT_ATTACK) then
+			fsm.ChangeState(player, ntopp_v2.enums.TAUNT)
+			return
 		end
 	end,
 	exit = function(self, player, state)
-		if (state == enums.BASE) then
+		if (state == ntopp_v2.enums.BASE) then
 			player.pvars.movespeed = 8*FU
 			if (player.mo) then
 				player.mo.momx = 0

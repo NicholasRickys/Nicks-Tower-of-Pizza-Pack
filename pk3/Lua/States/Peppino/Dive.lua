@@ -1,9 +1,9 @@
-fsmstates[enums.DIVE]['npeppino'] = {
+fsmstates[ntopp_v2.enums.DIVE]['npeppino'] = {
 	name = "Dive",
 	enter = function(self, player)
 		player.pvars.forcedstate = S_PEPPINO_DIVE
-		player.pvars.angle = player.drawangle
-		player.mo.momz = (-11*FU)*P_MobjFlip(player.mo)
+		player.pvars.drawangle = player.drawangle
+		L_ZLaunch(player.mo, -16*FU)
 	end,
 	think = function(self, player)
 		if not (player.mo) then return end
@@ -18,23 +18,26 @@ fsmstates[enums.DIVE]['npeppino'] = {
 			player.pvars.slidetime = $-1
 		end
 		
-		player.drawangle = player.pvars.angle
-		
+		player.drawangle = player.pvars.drawangle
+		if not (leveltime % 4) then
+			TGTLSGhost(player)
+		end
 		P_InstaThrust(player.mo, player.drawangle, player.pvars.movespeed)
 		P_MovePlayer(player)
 		
 		if P_IsObjectOnGround(player.mo) then
-			fsm.ChangeState(player, enums.ROLL)
+			fsm.ChangeState(player, ntopp_v2.enums.ROLL)
 			return
 		end
 		
-		if ((player.cmd.buttons & BT_JUMP) and not (player.prevkeys and player.prevkeys & BT_JUMP)) then
-			fsm.ChangeState(player, enums.BODYSLAM)
-			//player.pvars.forcedstate = S_PEPPINO_DIVEBOMB
+		if not (player.gotflag) and ((player.cmd.buttons & BT_JUMP) and not (player.prevkeys and player.prevkeys & BT_JUMP)) and not P_IsObjectOnGround(player.mo)
+			fsm.ChangeState(player, ntopp_v2.enums.BODYSLAM)
+			player.pvars.forcedstate = S_PEPPINO_DIVEBOMB
+			return
 		end
 	end,
 	exit = function(self, player, state)
-		if (state == enums.BASE) then
+		if (state == ntopp_v2.enums.BASE) then
 			player.pvars.movespeed = 8*FU
 			if (player.mo) then
 				player.mo.momx = 0

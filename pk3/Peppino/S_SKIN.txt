@@ -3,6 +3,7 @@ hudname = PEPPINO
 realname = Peppino
 flags = SF_HIRES|SF_NOJUMPSPIN|SF_STOMPDAMAGE|SF_NOSKID
 normalspeed = 18
+runspeed = 40
 accelstart = 60
 acceleration = 45
 thrustfactor = 12

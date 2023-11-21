@@ -1,26 +1,35 @@
 rawset(_G, 'fsm', {})
 rawset(_G, 'fsmstates', {})
 
-fsmstates[enums.BASE] = {}
-fsmstates[enums.MACH1] = {}
-fsmstates[enums.MACH2] = {}
-fsmstates[enums.MACH3] = {}
-fsmstates[enums.SKID] = {}
-fsmstates[enums.DRIFT] = {}
-fsmstates[enums.GRAB] = {}
-fsmstates[enums.BASE_GRABBEDENEMY] = {}
-fsmstates[enums.GRAB_KILLENEMY] = {}
-fsmstates[enums.LONGJUMP] = {}
-fsmstates[enums.CROUCH] = {}
-fsmstates[enums.ROLL] = {}
-fsmstates[enums.DIVE] = {}
-fsmstates[enums.BELLYSLIDE] = {}
-fsmstates[enums.SUPERJUMPSTART] = {}
-fsmstates[enums.SUPERJUMP] = {}
-fsmstates[enums.SUPERJUMPCANCEL] = {}
-fsmstates[enums.PAIN] = {}
-fsmstates[enums.WALLCLIMB] = {}
-fsmstates[enums.BODYSLAM] = {}
+fsmstates[ntopp_v2.enums.BASE] = {}
+fsmstates[ntopp_v2.enums.MACH1] = {}
+fsmstates[ntopp_v2.enums.MACH2] = {}
+fsmstates[ntopp_v2.enums.MACH3] = {}
+fsmstates[ntopp_v2.enums.SKID] = {}
+fsmstates[ntopp_v2.enums.DRIFT] = {}
+fsmstates[ntopp_v2.enums.GRAB] = {}
+fsmstates[ntopp_v2.enums.BASE_GRABBEDENEMY] = {}
+fsmstates[ntopp_v2.enums.GRAB_KILLENEMY] = {}
+fsmstates[ntopp_v2.enums.CROUCH] = {}
+fsmstates[ntopp_v2.enums.ROLL] = {}
+fsmstates[ntopp_v2.enums.DIVE] = {}
+fsmstates[ntopp_v2.enums.BELLYSLIDE] = {}
+fsmstates[ntopp_v2.enums.SUPERJUMPSTART] = {}
+fsmstates[ntopp_v2.enums.SUPERJUMP] = {}
+fsmstates[ntopp_v2.enums.SUPERJUMPCANCEL] = {}
+fsmstates[ntopp_v2.enums.PAIN] = {}
+fsmstates[ntopp_v2.enums.WALLCLIMB] = {}
+fsmstates[ntopp_v2.enums.BODYSLAM] = {}
+fsmstates[ntopp_v2.enums.UPPERCUT] = {}
+fsmstates[ntopp_v2.enums.TAUNT] = {}
+fsmstates[ntopp_v2.enums.GRABBED] = {}
+fsmstates[ntopp_v2.enums.PARRY] = {}
+fsmstates[ntopp_v2.enums.STUN] = {}
+fsmstates[ntopp_v2.enums.PILEDRIVER] = {}
+fsmstates[ntopp_v2.enums.BREAKDANCESTART] = {}
+fsmstates[ntopp_v2.enums.BREAKDANCELAUNCH] = {}
+fsmstates[ntopp_v2.enums.BREAKDANCE] = {}
+fsmstates[ntopp_v2.enums.SUPERTAUNT] = {}
 
 fsm.Init = function(player)
 	player.fsm = {}
@@ -38,10 +47,6 @@ fsm.ChangeState = function(player, state)
 	end
 	if (new_state and new_state.enter) then
 		new_state:enter(player, player.fsm.state)
-	end
-	
-	if (new_state)
-		tv.changeTVState(player, new_state.name)
 	end
 	
 	if (new_state) then
