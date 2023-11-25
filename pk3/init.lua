@@ -1,6 +1,11 @@
 //// NTOPP ////
 
 rawset(_G, 'ntopp_v2', {})
+rawset(_G, 'ptsp', {enabled = false})
+
+rawset(_G, "CanPlayPTSP", function()
+	return (ptsp.enabled and not multiplayer)
+end)
 
 rawset(_G, 'L_Choose', function(...)
 	local args = {...}
@@ -59,3 +64,5 @@ for _,p in ipairs({'Peppino'}) do
 		dofile(path.."Super Taunt.lua")
 	end
 end
+
+dofile('PTSP.lua')

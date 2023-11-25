@@ -20,7 +20,7 @@ fsmstates[ntopp_v2.enums.WALLCLIMB]['npeppino'] = {
 	name = "Wall Climb",
 	enter = function(self, player, state)
 		player.pvars.forcedstate = S_PEPPINO_WALLCLIMB
-		player.pvars.wallruntime = (state == ntopp_v2.enums.GRAB) and 11 or 0
+		player.pvars.wallruntime = (state == ntopp_v2.enums.GRAB) and 12 or 0
 		if state == ntopp_v2.enums.GRAB and not NerfAbility(player) then player.pvars.movespeed = 8*FU end
 	end,
 	think = function(self, player)
@@ -33,14 +33,18 @@ fsmstates[ntopp_v2.enums.WALLCLIMB]['npeppino'] = {
 		end
 		player.pflags = $|PF_STASIS
 		local atwall = WallCheckHelper(player)
-		if(atwall <= 0)
+		if not atwall then
 			fsm.ChangeState(player, GetMachSpeedEnum(player.pvars.movespeed))
 			player.mo.momz = 0
 			return
 		end
 		
 		if not (NerfAbility(player)) then
-			player.pvars.movespeed = $+(FU/2)
+			if player.pvars.movespeed < 60 then
+				player.pvars.movespeed = $+(FU/2)
+			else
+				player.pvars.movespeed = $+FU
+			end
 		else
 			player.pvars.movespeed = max(6*FU, $-(FU-(FU/3)))
 		end
@@ -60,8 +64,8 @@ fsmstates[ntopp_v2.enums.WALLCLIMB]['npeppino'] = {
 			player.drawangle = $+ANGLE_180
 			player.mo.angle = player.drawangle
 			
-			P_InstaThrust(player.mo, player.drawangle, FixedMul(18*FU, player.mo.scale))
-			player.pvars.movespeed = 18*FU
+			P_InstaThrust(player.mo, player.drawangle, FixedMul(22*FU, player.mo.scale))
+			player.pvars.movespeed = 22*FU
 			
 			fsm.ChangeState(player, ntopp_v2.enums.MACH2)
 			player.pvars.forcedstate = S_PEPPINO_WALLJUMP

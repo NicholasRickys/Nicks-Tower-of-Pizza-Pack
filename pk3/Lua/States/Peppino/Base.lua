@@ -5,6 +5,12 @@ local function NerfAbility()
 	and G_CoopGametype())
 end
 
+local function IsPanicSprite(player)
+	return ((player.ptsp and player.ptsp.pizzatime)
+		or (PTSR and PTSR.pizzatime)
+		or (PizzaTime and PizzaTime.sync and PizzaTime.sync.PizzaTime))
+end
+
 fsmstates[ntopp_v2.enums.BASE]['npeppino'] = {
 	name = "Standard",
 	enter = function(self, player)
@@ -27,6 +33,20 @@ fsmstates[ntopp_v2.enums.BASE]['npeppino'] = {
 		end
 		player.pvars.movespeed = 8*FU
 		
+		if IsPanicSprite(player)
+		and P_IsObjectOnGround(player.mo) then
+			if player.mo.momx == 0
+			and player.mo.momy == 0
+			and player.mo.state ~= S_PEPPINO_PANIC then
+				player.mo.state = S_PEPPINO_PANIC
+				player.panim = PA_IDLE
+			elseif not (player.mo.momx == 0
+			and player.mo.momy == 0)
+			and player.mo.state == S_PEPPINO_PANIC then
+				player.mo.state = S_PLAY_STND
+			end
+		end
+		
 		if player.ntoppv2_boogie and P_IsObjectOnGround(player.mo) then
 			player.mo.state = S_PEPPINO_BOOGIE
 			if player.speed ~= 0 then
@@ -45,6 +65,7 @@ fsmstates[ntopp_v2.enums.BASE]['npeppino'] = {
 		if (player.pflags & PF_STASIS) then return end
 		if (player.exiting) then return end
 		if (player.powers[pw_carry]) then return end
+		if (player.pflags & PF_SLIDING) then return end
 		
 		if not (player.gotflag) and ((player.cmd.buttons & BT_CUSTOM1 and not (player.prevkeys and player.prevkeys & BT_CUSTOM1))) then
 			if (player.cmd.buttons & BT_CUSTOM3) then

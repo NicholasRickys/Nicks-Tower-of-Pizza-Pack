@@ -9,11 +9,6 @@ rawset(_G, 'L_ZLaunch', function(mo,thrust,relative)
 	P_SetObjectMomZ(mo,thrust,relative)
 end)
 
-rawset(_G, 'L_Choose', function(...)
-	local choices = {...}
-	return choices[P_RandomRange(1,#choices)]
-end)
-
 rawset(_G, "IncreaseSuperTauntCount", function(player)
 	if not player.pvars.supertauntcount then
 		player.pvars.supertauntcount = 0
@@ -24,7 +19,6 @@ rawset(_G, "IncreaseSuperTauntCount", function(player)
 	if player.pvars.supertauntcount >= 10 and not player.pvars.supertauntready then
 		player.pvars.supertauntready = true
 		S_StartSound(player.mo, sfx_strea)
-		print('unleash the kraken')
 	end
 end)
 
@@ -34,99 +28,40 @@ rawset(_G, "WallCheckHelper", function(player, l) //unused for the most part, da
 		player.pvars.savedline = l
 	end
 	local line = player.pvars.savedline
-	local fheight = 0
-	local cheight = 0
 	local atwall = 0
 	
-	if line and not player.pvars.mobjblocked then
-		//buggie was a major help here
-		//this code is from his wall check v2, which he gave me permission to use
-		local linex,liney = P_ClosestPointOnLine(player.mo.x,player.mo.y,line)
-		local lineangle = R_PointToAngle2(player.mo.x,player.mo.y,linex,liney)
-		local lineside = P_PointOnLineSide(player.mo.x,player.mo.y,line)
-		
-		local side = sides[line.sidenum[lineside]]
-		local backside = sides[line.sidenum[1-lineside]]
-		
-		local frontsec = side and side.sector and side.sector.valid and side.sector --Shut up.
-		local backsec = backside and backside.sector and backside.sector.valid and backside.sector
-		
-		if player.mo.subsector and player.mo.subsector.sector then
-			if side and side.sector and player.mo.subsector.sector == side.sector then
-				frontsec = side and side.sector and side.sector.valid and side.sector
-				backsec = backside and backside.sector and backside.sector.valid and backside.sector
-			else
-				frontsec = backside and backside.sector and backside.sector.valid and backside.sector
-				backsec = side and side.sector and side.sector.valid and side.sector
-			end
-		end
-		
-		if player.fsm and player.fsm.state == ntopp_v2.enums.WALLCLIMB then
-			player.drawangle = lineangle
-		end
-		if backsec then
-			local floorz = backsec.floorheight
-			local ceilingz = backsec.ceilingheight
-			
-			if backsec.f_slope then
-				floorz = P_GetZAt(backsec.f_slope, player.mo.x + player.mo.momx, player.mo.y + player.mo.momy)
-			end
-			if backsec.c_slope then
-				ceilingz = P_GetZAt(backsec.c_slope, player.mo.x + player.mo.momx, player.mo.y + player.mo.momy)
-			end
-			
-			local diff = player.drawangle - lineangle
-			if (diff <= ANG1*35 and diff >= -ANG1*35) then
-				for wall in backsec.ffloors() do
-					if (player.mo.z <= wall.topheight) and (player.mo.height+player.mo.z > wall.bottomheight)
-						and(wall.flags & FF_EXISTS)
-						and(wall.flags & FF_SOLID or wall.flags & FF_BLOCKPLAYER) then //Don't want the player to cling to water. That would be stupid
-						return 1
-					end
-				end
-				
-				local canclimb = player.mo.eflags & MFE_VERTICALFLIP and (player.mo.z + player.mo.height >= ceilingz) or (player.mo.z <= floorz)
-				if canclimb then return 1 end
-			end
-		end
+	local sector = line.frontsector
+	if line.backsector and player.mo.subsector.sector == sector then
+		sector = line.backsector
+	end
+
+	local climbing = (player.mo.z < sector.floorheight)
+	if not line.backsector then
+		climbing = true
+	end
+	if climbing then
+		return true
 	end
 	
-	// didnt pass through? lets do a check using "raycasting"
-	if not player.pvars.mobjblocked then
-		//Finding walls (not FOFs)
-		//second attempt at finding wall code from ssnmighty by man553, shoutouts to my bro
-		local wall = R_PointInSubsector(player.mo.x+FixedMul(26*FRACUNIT, cos(player.drawangle)), player.mo.y+FixedMul(26*FRACUNIT, sin(player.drawangle))).sector
-		fheight = wall.floorheight
-		cheight = wall.ceilingheight
-	
-		if wall.f_slope then
-			fheight = P_GetZAt(wall.f_slope, player.mo.x + player.mo.momx, player.mo.y + player.mo.momy)
-		end
-		if wall.c_slope then
-			cheight = P_GetZAt(wall.c_slope, player.mo.x + player.mo.momx, player.mo.y + player.mo.momy)
-		end
-		
-		if wall and not (wall.flags & ML_NOCLIMB) and (fheight > player.mo.z) or ((cheight <= player.mo.height+player.mo.z) and not (fheight == cheight)/* and (wall.ceilingpic == "F_SKY1")*/) then //This last bit seems to be broken...
-			atwall = $+1
-		end
-		//FOFs can be walls too, so lets check for those
-		for wall in wall.ffloors()
+	for _,sec in pairs({line.frontsector, line.backsector}) do
+		if not sec then continue end
+		for wall in sec.ffloors() do
 			if (player.mo.z <= wall.topheight) and (player.mo.height+player.mo.z > wall.bottomheight)
 				and(wall.flags & FF_EXISTS)
-				and(wall.flags & FF_SOLID or wall.flags & FF_BLOCKPLAYER) //Don't want the player to cling to water. That would be stupid
-				atwall = $ + 1
-			end		
+				and(wall.flags & FF_SOLID or wall.flags & FF_BLOCKPLAYER) then //Don't want the player to cling to water. That would be stupid
+				return true
+			end
 		end
 	end
 	
 	if player.pvars.mobjblocked then
 		if player.mo.z < player.pvars.mobjblocked.z+player.pvars.mobjblocked.height and player.mo.z+player.mo.height > player.pvars.mobjblocked.z then
-			atwall = $+1
+			return true
 		else
 			player.pvars.mobjblocked = nil
 		end
 	end
-	return atwall
+	return false
 end)
 
 rawset(_G, "Init", function()

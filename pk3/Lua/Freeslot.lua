@@ -26,10 +26,21 @@ freeslot("S_PJUMPDUST", "SPR_JPDT", "sfx_pjump")
 
 freeslot("S_PSTNDJUMPDUST", "SPR_JPDU")
 
+freeslot("MT_NTOPP_RAGDOLLENEMY","S_SUPERTAUNTEFFECT","SPR_STSP")
+
 states[S_LINEPARTICLE_MACHDUST] = {SPR_MCDS, FF_PAPERSPRITE|FF_ANIMATE|A, 6*2, nil, 5, 2, S_NULL}
 states[S_LINEPARTICLE_RUNDUST] = {SPR_SDSC, FF_PAPERSPRITE|FF_ANIMATE|A, 5*2, nil, 4, 2, S_NULL}
 states[S_PJUMPDUST] = {SPR_JPDT, FF_PAPERSPRITE|FF_ANIMATE|A, 6, nil, 5, 1, S_NULL}
 states[S_PSTNDJUMPDUST] = {SPR_JPDU, FF_ANIMATE|A, 7, nil, 6, 1, S_NULL}
+
+states[S_SUPERTAUNTEFFECT] = {
+	sprite = SPR_STSP,
+	frame = A|FF_ANIMATE,
+	tics = 10,
+	var1 = 5,
+	var2 = 2,
+	nextstate = S_DEATHSTATE
+}
 
 mobjinfo[MT_LINEPARTICLE] = {
 	doomednum = -1,
@@ -41,6 +52,12 @@ mobjinfo[MT_NTOPP_AFTERIMAGE] = {
 	doomednum = -1,
 	spawnstate = S_LINEPARTICLE_MACHDUST,
 	flags = MF_NOCLIP|MF_NOBLOCKMAP|MF_NOCLIPHEIGHT|MF_NOGRAVITY
+}
+
+mobjinfo[MT_NTOPP_RAGDOLLENEMY] = {
+	doomednum = -1,
+	spawnstate = S_INVISIBLE,
+	flags = MF_SCENERY|MF_NOBLOCKMAP|MF_NOCLIP
 }
 
 // PLAYER SHIT
@@ -58,6 +75,7 @@ freeslot('sfx_drift')
 freeslot('sfx_pgrab')
 
 freeslot('sfx_kenem')
+sfxinfo[sfx_kenem].caption = "Killed an enemy"
 freeslot('sfx_parry')
 freeslot('sfx_taunt')
 
@@ -144,6 +162,8 @@ freeslot('SPR2_STA1')
 freeslot('SPR2_STA2')
 freeslot('SPR2_STA3')
 freeslot('SPR2_STA4')
+
+freeslot('SPR2_PANC')
 
 freeslot('S_PEPPINO_JUMPTRNS')
 freeslot('S_PEPPINO_FALLTRNS')
@@ -243,6 +263,8 @@ freeslot('S_PEPPINO_SUPERTAUNT1')
 freeslot('S_PEPPINO_SUPERTAUNT2')
 freeslot('S_PEPPINO_SUPERTAUNT3')
 freeslot('S_PEPPINO_SUPERTAUNT4')
+
+freeslot('S_PEPPINO_PANIC')
 
 freeslot("S_EXPLOSIONEFFECT","SPR_EPLO","S_MACH4RING","SPR_M4RI")
 
@@ -392,3 +414,5 @@ states[S_PEPPINO_SUPERTAUNT1] = {SPR_PLAY, SPR2_STA1|FF_ANIMATE|A, 10*2, nil, 9,
 states[S_PEPPINO_SUPERTAUNT2] = {SPR_PLAY, SPR2_STA2|FF_ANIMATE|A, 10*2, nil, 9, 2, S_PLAY_STND}
 states[S_PEPPINO_SUPERTAUNT3] = {SPR_PLAY, SPR2_STA3|FF_ANIMATE|A, 10*2, nil, 9, 2, S_PLAY_STND}
 states[S_PEPPINO_SUPERTAUNT4] = {SPR_PLAY, SPR2_STA4|FF_ANIMATE|A, 10*2, nil, 9, 2, S_PLAY_STND}
+
+states[S_PEPPINO_PANIC] = {SPR_PLAY, SPR2_PANC, 2, nil, 0, 0, S_PEPPINO_PANIC}

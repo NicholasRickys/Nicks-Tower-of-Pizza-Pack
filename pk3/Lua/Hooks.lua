@@ -137,6 +137,22 @@ addHook('ThinkFrame', function()
 	end
 end)
 
+addHook('PostThinkFrame', function()
+	for player in players.iterate do
+		if not player.mo then continue end
+		if not isPTSkin(player.mo.skin) then continue end
+		if (player.pvars and player.pvars.forcedstate) then continue end
+
+		if not P_IsObjectOnGround(player.mo) and player.mo.state == S_PLAY_WALK then
+			player.mo.state = S_PLAY_FALL
+		end
+
+		if player.pflags & PF_SLIDING and player.mo.state ~= S_PEPPINO_MACH1 then
+			player.mo.state = S_PEPPINO_MACH1
+		end
+	end
+end)
+
 addHook('MobjDeath', function(mo)
 	local player = mo.player
 	if not (player.valid) then return end
@@ -491,7 +507,7 @@ addHook('PreThinkFrame', do
 			end
 			player.pvars.grabbedenemy = nil
 		end
-		if (player.powers[pw_carry] and player.fsm.state ~= ntopp_v2.enums.BASE) then
+		if ((player.powers[pw_carry] or player.pflags & PF_SLIDING) and player.fsm.state ~= ntopp_v2.enums.BASE) then
 			fsm.ChangeState(player, ntopp_v2.enums.BASE)
 		end
 	end
@@ -507,24 +523,33 @@ end)
 
 local function doPain(player)
 	fsm.ChangeState(player, ntopp_v2.enums.PAIN)
-	S_StartSound(player.mo, L_Choose(sfx_pain1, sfx_pain2))
+	--if player.rings > 0 then
+		S_StartSound(player.mo, L_Choose(sfx_pain1, sfx_pain2))
+	--end
 end
 
-addHook('MobjDamage', function(target, inflictor, source)
+addHook('MobjDamage', function(target, inf, source)
+    if not target.player then return end
+    if not isPTSkin(target.skin) then return end
+    if P_PlayerInPain(target.player) then return end
+	
+	doPain(target.player)
+end, MT_PLAYER)
+
+addHook('ShouldDamage', function(target, inflictor, source)
 	if not target.player then return end
 	local player = target.player
 	
 	if not isPTSkin(player.mo.skin) then return end
-	if not inflictor then doPain(player) return end
+	if not inflictor then return end
 	if player.fsm and player.fsm.state == ntopp_v2.enums.GRAB then
-		return true
+		return false
 	end
 	if inflictor then
 		if inflictor and inflictor.valid and player.fsm and player.fsm.state == ntopp_v2.enums.TAUNT then
 			local mobj = inflictor
-			local speed = FixedHypot(mobj.momx, mobj.momy)/FU
-			local downwardsspeed = mobj.momz
-			if not (mobj.flags & MF_ENEMY or mobj.flags & MF_BOSS) then
+
+			if inflictor ~= source then
 				if mobj.flags & MF_MISSILE then
 					mobj.target = player.mo
 				else
@@ -538,13 +563,12 @@ addHook('MobjDamage', function(target, inflictor, source)
 				P_DamageMobj(inflictor, target, target)
 			end
 			fsm.ChangeState(player, ntopp_v2.enums.PARRY)
-			return true
+			return false
 		end
-		if player.fsm and (player.fsm.state == ntopp_v2.enums.TAUNT or player.fsm.state == ntopp_v2.enums.PARRY) then
-			return true
+		if player.fsm and (player.fsm.state == ntopp_v2.enums.PARRY) then
+			return false
 		end
 	end
-	doPain(player)
 end)
 
 addHook('MobjThinker', function(mobj)
@@ -617,7 +641,8 @@ addHook('PlayerCanDamage', function(player, mobj)
 	end
 	
 	if (player.fsm.state == ntopp_v2.enums.DRIFT and (mobj.flags & MF_ENEMY or mobj.flags & MF_MONITOR)) then return true end
-	if (player.fsm.state == ntopp_v2.enums.BREAKDANCELAUNCH and (mobj.flags & MF_ENEMY or mobj.flags & MF_MONITOR)) then return true end
+	if (player.fsm.state == ntopp_v2.enums.MACH2 and player.pvars.breakdance and (mobj.flags & MF_ENEMY or mobj.flags & MF_MONITOR)) then return true end
+	if (player.fsm.state == ntopp_v2.enums.SUPERJUMP and (mobj.flags & MF_ENEMY or mobj.flags & MF_MONITOR)) then return true end
 	if (player.fsm.state == ntopp_v2.enums.GRAB and mobj.flags & MF_ENEMY and (not (player.pvars.grabbedenemy and player.pvars.grabbedenemy.valid) or player.pvars.grabbedenemy == mobj)) then
 		return false
 	end

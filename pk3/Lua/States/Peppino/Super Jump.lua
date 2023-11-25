@@ -45,8 +45,10 @@ fsmstates[ntopp_v2.enums.SUPERJUMPSTART]['npeppino'] = {
 			
 		if not (player.cmd.buttons & BT_CUSTOM3) and P_IsObjectOnGround(player.mo) then
 			fsm.ChangeState(player, ntopp_v2.enums.SUPERJUMP)
-			local explosion = P_SpawnMobj(player.mo.x,player.mo.y,player.mo.z,MT_THOK)
-			explosion.state = S_EXPLOSIONEFFECT
+		end
+	end,
+	exit = function(self, player, state)
+		if player.mo then
 			player.normalspeed = skins[player.mo.skin].normalspeed
 		end
 	end
@@ -69,6 +71,8 @@ fsmstates[ntopp_v2.enums.SUPERJUMP]['npeppino'] = {
 				player.mo.state = S_PLAY_STND // will default to what state it should be
 			end
 		end
+		local explosion = P_SpawnMobj(player.mo.x,player.mo.y,player.mo.z,MT_THOK)
+		explosion.state = S_EXPLOSIONEFFECT
 	end,
 	think = function(self, player)
 		if not (player.mo) then return end

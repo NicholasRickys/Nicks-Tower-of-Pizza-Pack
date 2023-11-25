@@ -14,6 +14,7 @@ fsmstates[ntopp_v2.enums.MACH3]['npeppino'] = {
 	enter = function(self, player)
 		player.pvars.forcedstate = S_PEPPINO_MACH3
 		player.pvars.drawangle = player.drawangle
+		player.pvars.thrustangle = player.drawangle
 		player.pvars.jumppressed = P_IsObjectOnGround(player.mo)
 		player.charflags = $|SF_RUNONWATER|SF_CANBUSTWALLS
 	end,
@@ -25,13 +26,12 @@ fsmstates[ntopp_v2.enums.MACH3]['npeppino'] = {
 				return
 			end
 		end
-		
 		if IsMach4(player.pvars.movespeed) then
 			player.pvars.forcedstate = S_PEPPINO_MACH4
 		elseif not (player.pvars.forcedstate == S_PEPPINO_SUPERJUMPCANCEL)
 			player.pvars.forcedstate = S_PEPPINO_MACH3
 		end
-		
+		player.pvars.thrustangle = player.drawangle
 		if (player.pvars.jumppressed and P_IsObjectOnGround(player.mo) and not (player.cmd.buttons & BT_JUMP)) then
 			player.pvars.jumppressed = false
 		end
@@ -54,18 +54,20 @@ fsmstates[ntopp_v2.enums.MACH3]['npeppino'] = {
 			end
 		end
 		local supposeddrawangle = player.pvars.drawangle
-		if supposeddrawangle == nil then supposeddrawangle = player.drawangle end
+		if supposeddrawangle == nil then supposeddrawangle = player.pvars.thrustangle end
 		
-		local diff = player.pvars.drawangle - player.drawangle
+		local diff = supposeddrawangle - player.pvars.thrustangle
 		local deaccelerating = (P_GetPlayerControlDirection(player) == 2)
 		
 		if diff >= 4*ANG1 then
-			player.drawangle = player.pvars.drawangle - 4*ANG1
+			player.drawangle = player.pvars.drawangle
+			player.pvars.thrustangle = player.pvars.drawangle - 4*ANG1
 		elseif diff <= -8*ANG1 then
-			player.drawangle = player.pvars.drawangle + 4*ANG1
+			player.drawangle = player.pvars.drawangle
+			player.pvars.thrustangle = player.pvars.drawangle + 4*ANG1
 		end
 		
-		player.pvars.drawangle = player.drawangle
+		player.pvars.drawangle = player.pvars.thrustangle
 		// code for this is by luigi shoutouts to my bro lmfaooooo
 		if P_IsObjectOnGround(player.mo) and not (leveltime%10) then
 			local p = player
@@ -82,7 +84,7 @@ fsmstates[ntopp_v2.enums.MACH3]['npeppino'] = {
 		if not (leveltime % 4) then
 			TGTLSAfterImage(player)
 		end
-		P_InstaThrust(player.mo, player.drawangle, FixedMul(player.pvars.movespeed, player.mo.scale))
+		P_InstaThrust(player.mo, player.pvars.thrustangle, FixedMul(player.pvars.movespeed, player.mo.scale))
 		P_MovePlayer(player)
 		
 		if (player.powers[pw_justlaunched]) then
